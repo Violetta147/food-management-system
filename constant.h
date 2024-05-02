@@ -7,6 +7,7 @@
 
 
 char PASS[MAX] = "23TDT1";
+char mode, action; //Admin's variables
 char x[1] = "X";
 char o[1] = "0";
 char zerozero[3] = "00";

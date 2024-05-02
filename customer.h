@@ -31,19 +31,20 @@ void printMenu()
 int orderDish(Menu menu, OrderItem *orderItem)
 {
     printf("Vui long chon mon an theo ma PIN: ");
-
     int dishPIN;
     scanf("%d", &dishPIN);
+    clstd();
+    
     while (true)
     {
         if (dishPIN == 0)
         {
             printf("Ban da huy viec chon mon an\n");
             return 1;
-        }
+        }   
 
         for (int i = 0; i < menu.total; i++)
-        {
+        {   
             if (dishPIN == menu.dishes[i].PIN)
             {
                 orderItem->dish = menu.dishes[i];

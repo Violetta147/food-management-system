@@ -62,7 +62,10 @@ float calculateBill(Order order)
             printf("Ban da thanh toan don hang ma so %d", countOrder);
             ++countOrder;
             order.status = ORDER_PAID;
+            printf("Ban co muon order tiep khong?");
+            // choose food again
         }
+        
     }
 }
 
