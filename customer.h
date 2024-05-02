@@ -6,6 +6,14 @@
 #include "structs/order.h"
 #include "file-handler/file-handler.h"
 
+//function prototypes
+void printMenu();
+void orderDish(Menu menu, OrderItem *orderItem);
+void OrderAgain();
+void OrderManyDishes();
+
+
+//function definitions
 void printMenu()
 {
     Menu menu = readMenu("menu.txt");
@@ -32,9 +40,13 @@ int orderDish(Menu menu, OrderItem *orderItem)
 {
     printf("Vui long chon mon an theo ma PIN: ");
     int dishPIN;
-    scanf("%d", &dishPIN);
+    int result; //truyen du lieu dishPin cho result de check
+    while((result = scanf("%d", &dishPIN)) != 1)
+    {
+        while(getchar() != '\n'); //clear input buffer
+        printf("Vui long nhap dung ma PIN: ");
+    }
     clstd();
-    
     while (true)
     {
         if (dishPIN == 0)
@@ -55,6 +67,52 @@ int orderDish(Menu menu, OrderItem *orderItem)
             }
         }
         printf("Mon an voi ma PIN %d khong duoc tim thay vui long nhap lai: ", dishPIN);
-        scanf("%d", &dishPIN);
+        while((result = scanf("%d", &dishPIN)) != 1)
+        {
+            while(getchar() != '\n'); //clear input buffer
+            printf("\nVui long nhap dung ma PIN: ");
+        }
     }
+}
+
+void OrderManyDishes()
+{
+    Menu menu = readMenu("menu.txt");
+    OrderItem orderitem;
+    yawm();
+    system("color 0F");
+    printMenu();
+    orderDish(menu, &orderitem);
+    Order order;
+    order.items[0] = orderitem;
+    order.total = 1;
+    calculateBill(order);
+    OrderAgain();
+}
+void OrderAgain()
+{
+    printf("Ban co muon dat mon an khac khong? [Y/N]");
+    char tmp[1000];
+    fgets(tmp, 1000, stdin);
+    tmp[strlen(tmp) - 1] = '\0';
+    if (strcasecmp(tmp, "Y") == 0)
+    {   Menu menu = readMenu("menu.txt");
+        OrderItem orderitem;
+        yawm();
+        system("color 0F");
+        printMenu();
+        orderDish(menu, &orderitem);
+        Order order;
+        order.items[0] = orderitem;
+        
+    }
+    else if (strcasecmp(tmp, "N") == 0)
+    {
+        printf("Cam on quy khach da su dung dich vu cua chung toi.\n");
+    }
+    else
+    {
+        printf("Vui long nhap dung lua chon [Y/N]\n");
+    }
+
 }
