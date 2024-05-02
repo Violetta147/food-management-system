@@ -9,7 +9,7 @@
 #include "constant.h"
 
 #define INVOICE_FILE_PATH "/data/invoices/"
-#define MAX_LENGTH
+#define MAX_LENGTH 256
 
 float calculateBill(Order order)
 {
