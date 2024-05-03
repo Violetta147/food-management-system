@@ -42,11 +42,16 @@ void addOrder(Order order)
 }
 void printOrderStatus(int orderIndex)
 {
-    if(orderIndex < 0 || orderIndex >= numOrders)
+    if(orderIndex < 0 || orderIndex >= numOrder)
     {
         printf("Khong tim thay don hang.\n");
     }
     else{
         printf("Trang thai don hang: %s\n", orders[orderIndex].status);
     }
+}
+// count orders function
+int countOrders()
+{
+    return countOrder;
 }

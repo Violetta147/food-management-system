@@ -53,3 +53,36 @@ Menu readMenu(const char* fileName)
 
     return menu;
 }
+// co orders globally 
+// co countOrders dem so orders in array of orders 
+// co order items total
+void writeOrder(const char* fileName, Order order, float *sum, float *sale, float *total)
+{
+    char filePath[MAX_PATH_LENGTH];
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, fileName);
+
+    FILE* orderP = fopen(filePath, "w");
+    if (orderP == NULL) 
+    {
+        printf("Unable to open file.\n");
+        return;
+    }
+    int temp = countOrders();
+    // write order includes order number, dishes PIN,
+    // quantity, name, price, total price after discount, 
+    //total price before discount, discount, and status
+    for(int i = 0; i < order.total; i++)
+    {
+        fprintf(orderP, "Order number: %d\n", temp);
+        fprintf(orderP, "Dishes PIN: %d\n", order.items[i].dish.PIN);
+        fprintf(orderP, "Quantity: %d\n", order.items[i].quantity);
+        fprintf(orderP, "Name: %s\n", order.items[i].dish.name);
+        fprintf(orderP, "Price: %.0f\n", order.items[i].dish.price);
+        fprintf(orderP, "Total price after discount: %.0f\n", *total);
+        fprintf(orderP, "Total price before discount: %.0f\n", *sum);
+        fprintf(orderP, "Discount: %.0f\n", *sale);
+        fprintf(orderP, "Status: %s\n", *order.status);
+    }
+    fclose(orderP);
+}

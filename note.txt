@@ -13,3 +13,20 @@ printf("Vui long doi ");
                 system("color ");
     // }
     // printf("\033[2J\033[1;1H");
+
+    // //begin program
+    // //prompt and validate the mode selection (A/C)
+    // enter();
+    // if (toupper(mode) == 'A')
+    // {
+    //     //confirm password and validation for accessing admin mode
+    //     printf("De vao che do Admin, vui long nhap mat khau: ");
+    //     conf();
+    //     //prompt and validate the admin's choice
+    //     admin();
+    // }
+    // else
+    // {
+    //     //prompt and validate the customer's choice
+    //     customer();
+    // }

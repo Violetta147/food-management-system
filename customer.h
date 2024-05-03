@@ -8,10 +8,9 @@
 
 //function prototypes
 void printMenu();
-void orderDish(Menu menu, OrderItem *orderItem);
+int orderDish(Menu menu, OrderItem *orderItem);
 void OrderAgain();
-void OrderManyDishes();
-
+Order OrderManyDishes();
 
 //function definitions
 void printMenu()
@@ -37,10 +36,11 @@ void printMenu()
 }
 
 int orderDish(Menu menu, OrderItem *orderItem)
-{
+{   
+
     printf("Vui long chon mon an theo ma PIN: ");
     int dishPIN;
-    int result; //truyen du lieu dishPin cho result de check
+    int result; //truyen du lieu dishPIN cho result de check
     while((result = scanf("%d", &dishPIN)) != 1)
     {
         while(getchar() != '\n'); //clear input buffer
@@ -75,36 +75,56 @@ int orderDish(Menu menu, OrderItem *orderItem)
     }
 }
 
-void OrderManyDishes()
+Order OrderManyDishes()
 {
     Menu menu = readMenu("menu.txt");
+    int i = 0;
     OrderItem orderitem;
+    Order order;
+    order.total = 0;
     yawm();
     system("color 0F");
     printMenu();
-    orderDish(menu, &orderitem);
-    Order order;
-    order.items[0] = orderitem;
-    order.total = 1;
-    calculateBill(order);
-    OrderAgain();
+    while(true)
+    {   
+        orderDish(menu, &orderitem);
+        order.items[i] = orderitem;
+        orders[i] = order;
+        ++i;
+        order.total++;
+        printf("Ban co muon dat mon an khac khong? [Y/N]");
+        char tmp[1000];
+        scanf("%s", tmp);
+        clstd();
+        if (isYes(tmp))
+        {
+            goto order;
+        }
+        else if (isNo(tmp))
+        {
+            break;
+        }
+        else
+        {
+            printf("Vui long nhap dung lua chon [Y/N]\n");
+        }
+    }
+    return order;
 }
 void OrderAgain()
 {
-    printf("Ban co muon dat mon an khac khong? [Y/N]");
+    printf("Ban co muon dat order khac khong? [Y/N]");
     char tmp[1000];
     fgets(tmp, 1000, stdin);
     tmp[strlen(tmp) - 1] = '\0';
     if (strcasecmp(tmp, "Y") == 0)
     {   Menu menu = readMenu("menu.txt");
         OrderItem orderitem;
+        Order order;
         yawm();
         system("color 0F");
         printMenu();
-        orderDish(menu, &orderitem);
-        Order order;
-        order.items[0] = orderitem;
-        
+        OrderManyDishes();
     }
     else if (strcasecmp(tmp, "N") == 0)
     {

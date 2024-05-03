@@ -105,3 +105,24 @@ bool isYes(char* c)
     }
     return (strcmp(c, "yes") == 0 || strcmp(c, "y") == 0);
 }
+// check if user type in no NO N n
+bool isNo(char* c)
+{
+    for(int i = 0; c[i] != '\0'; i++)
+    {
+        c[i] =tolower(c[i]);
+    }
+    return (strcmp(c, "no") == 0 || strcmp(c, "n") == 0);
+}
+// ask user to confirm save changes
+void arg()
+{   
+    do
+    {
+        printf("Ban co muon luu thay doi khong? [Y/N]: ");
+        scanf("%c", &ans);
+        clstd();
+    } 
+    while(toupper(ans) != 'N' && toupper(ans) != 'Y' && toupper(ans) != 'X');
+}
+
