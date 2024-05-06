@@ -14,3 +14,5 @@ typedef struct Menu
     Dish dishes[MAX];
     int total;
 } Menu;
+
+Menu menu;

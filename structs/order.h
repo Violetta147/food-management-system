@@ -15,43 +15,10 @@ typedef struct OrderItem //old Pick
 
 // an Order
 typedef struct Order 
-{
-    OrderItem items[MAX];
-    int total;
-    char *status; // ORDER_PROCESSING, ORDER_PAID, ORDER_CANCELLED
+{   
+    char date[12]; // dd-mm-yyyy
+    int orderID;
+    OrderItem items[MAX_ORDER_ITEMS];
+    int total; 
+    char* status; 
 } Order;
-
-Order orders[MAX_ORDERS]; // array of orders
-
-// Function prototypes
-void addOrder(Order order);
-void printOrderStatus(int orderIndex);
-
-// Function definitions
-void addOrder(Order order)
-{
-    if(numOrder < MAX_ORDERS)
-    {
-        orders[numOrder] = order;
-        numOrder++;
-    }
-    else
-    {
-        printf("Da vuot qua so don hang toi da\n");
-    }
-}
-void printOrderStatus(int orderIndex)
-{
-    if(orderIndex < 0 || orderIndex >= numOrder)
-    {
-        printf("Khong tim thay don hang.\n");
-    }
-    else{
-        printf("Trang thai don hang: %s\n", orders[orderIndex].status);
-    }
-}
-// count orders function
-int countOrders()
-{
-    return countOrder;
-}

@@ -125,4 +125,17 @@ void arg()
     } 
     while(toupper(ans) != 'N' && toupper(ans) != 'Y' && toupper(ans) != 'X');
 }
+//function to prevent user from entering repeated orderID
+bool isRepeatOrderID(Order *orders, int orderID, int total)
+{
+    for(int i = 0; i < total; i++)
+    {
+        if(orders[i].orderID == orderID)
+        {
+            printf("Ma don hang %d da ton tai. Vui long nhap lai: ", orderID);
+            return true;
+        }
+    }
+    return false;
+}
 

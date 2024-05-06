@@ -9,16 +9,21 @@
 
 int main(void)
 {
-    
-    float sum;
-    float sale;
-    float total;
+    // Order order;
 
-    Order order = OrderManyDishes();
-    calculateBill(&order, &sum, &sale, &total);
-    printf("Tong tien: %.0f\n", sum);
-    printf("Khuyen mai: %.0f\n", sale);
-    printf("Thanh tien: %.0f\n", total);
-    // //write order to file
-    // writeOrder("order.txt", order, sum, sale, total);
+    // bool isLoop = true;
+    // while(isLoop)
+    // {
+    //     float sum;
+    //     float sale;
+    //     float total;
+
+        
+    //     makeOrder(&order);
+    //     calculateBill(&order, &sum, &sale, &total);
+    //     printf("Tong tien: %.0f\n", sum);
+    //     printf("Khuyen mai: %.0f\n", sale);
+    //     printf("Thanh tien: %.0f\n", total);
+    //     isLoop = ynQuestion("Ban co muon tiep tuc khong?");
+    }
 }

@@ -5,19 +5,11 @@
 #include <string.h>
 #include "structs/order.h"
 #include "file-handler/file-handler.h"
+#include "menufunction.h"
 
-//function prototypes
-void printMenu();
-int orderDish(Menu menu, OrderItem *orderItem);
-void OrderAgain();
-Order OrderManyDishes();
-
-//function definitions
-void printMenu()
+void printMenu(Menu menu)
 {
-    Menu menu = readMenu("menu.txt");
     printf("\nWelcome to Teddy Restaurant!\n");
-
     printf("\n%17s  %17s  %14s\n", "PIN", "Dishes", "Price");
     for (int i = 0; i < 10; i++)
     {
@@ -28,111 +20,138 @@ void printMenu()
         printf("_");
     }
     printf("\n");
+
     for (int i = 0; i < menu.total; i++)
     {
-        printf("%17d  %17s   %14.0f \n", menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].price);
+        printf("%17d  %17s  %14.0f \n", menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].price);
     }
     printf("\n");
 }
 
 int orderDish(Menu menu, OrderItem *orderItem)
-{   
+{
 
     printf("Vui long chon mon an theo ma PIN: ");
     int dishPIN;
-    int result; //truyen du lieu dishPIN cho result de check
-    while((result = scanf("%d", &dishPIN)) != 1)
+    int result; // truyen du lieu dishPIN cho result de check
+    while ((result = scanf("%d", &dishPIN)) != 1)
     {
-        while(getchar() != '\n'); //clear input buffer
+        while (getchar() != '\n')
+            ; // clear input buffer
         printf("Vui long nhap dung ma PIN: ");
     }
     clstd();
+
     while (true)
     {
         if (dishPIN == 0)
         {
             printf("Ban da huy viec chon mon an\n");
             return 1;
-        }   
+        }
 
         for (int i = 0; i < menu.total; i++)
-        {   
+        {
             if (dishPIN == menu.dishes[i].PIN)
             {
                 orderItem->dish = menu.dishes[i];
                 printf("Vui long nhap so luong mon an: ");
-                scanf("%d", &orderItem->quantity);
-                printf("Ban da chon mon %s voi so luong %d va gia %0.0f\n", orderItem->dish.name, orderItem->quantity,orderItem->dish.price);
+                while(scanf("%d", &orderItem->quantity) != 1)
+                {   
+                    if(orderItem->quantity <= 0)
+                        {
+                            clstd();
+                            printf("Vui long nhap dung so luong: ");
+                        }
+                    else
+                    {
+                        clstd();
+                        printf("Vui long nhap dung so luong: ");
+                    }
+                }
+                printf("Ban da chon mon %s voi so luong %d va gia %0.0f\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.price);
                 return 0;
             }
         }
         printf("Mon an voi ma PIN %d khong duoc tim thay vui long nhap lai: ", dishPIN);
-        while((result = scanf("%d", &dishPIN)) != 1)
+        while ((result = scanf("%d", &dishPIN)) != 1)
         {
-            while(getchar() != '\n'); //clear input buffer
+            while (getchar() != '\n'); // clear input buffer
             printf("\nVui long nhap dung ma PIN: ");
         }
     }
 }
 
-Order OrderManyDishes()
-{
-    Menu menu = readMenu("menu.txt");
-    int i = 0;
+
+void makeOrder(Order *order)
+{   int i = 0;
+    int Contflag = 0;
+    menu = readMenu("menu.txt");
     OrderItem orderitem;
-    Order order;
-    order.total = 0;
+    order->total = 0;
     yawm();
     system("color 0F");
-    printMenu();
-    while(true)
+    printMenu(menu);
+    while (true)
     {   
         orderDish(menu, &orderitem);
-        order.items[i] = orderitem;
-        orders[i] = order;
-        ++i;
-        order.total++;
-        printf("Ban co muon dat mon an khac khong? [Y/N]");
-        char tmp[1000];
-        scanf("%s", tmp);
-        clstd();
-        if (isYes(tmp))
+        //first loop doesn't excute
+        for(int j = 0; j < order->total; j++)
         {
-            goto order;
+            if(order->items[j].dish.PIN == orderitem.dish.PIN)
+            {
+                order->items[j].quantity += orderitem.quantity;
+                Contflag = 1;
+                break;
+            }
         }
-        else if (isNo(tmp))
+        if(Contflag == 0)
         {
-            break;
+        order->items[i] = orderitem;
+        i++;
+        order->total++;
+        order->status = ORDER_PROCESSING;
         }
-        else
-        {
-            printf("Vui long nhap dung lua chon [Y/N]\n");
+        else Contflag = 0;
+
+        if (ynQuestion("Ban co muon dat mon an khac khong?") == 0)
+        {   
+            if (order->total > MAX_ORDER_ITEMS)
+                break;
+            else
+            {
+                createOrderID(order);
+                break;
+            }
         }
     }
-    return order;
 }
-void OrderAgain()
+
+void OrderAgain(Order *order)
 {
-    printf("Ban co muon dat order khac khong? [Y/N]");
-    char tmp[1000];
-    fgets(tmp, 1000, stdin);
-    tmp[strlen(tmp) - 1] = '\0';
-    if (strcasecmp(tmp, "Y") == 0)
-    {   Menu menu = readMenu("menu.txt");
+
+    if (ynQuestion("Ban co muon dat order khac khong?"))
+    {
+        Menu menu = readMenu("menu.txt");
         OrderItem orderitem;
-        Order order;
         yawm();
         system("color 0F");
-        printMenu();
-        OrderManyDishes();
-    }
-    else if (strcasecmp(tmp, "N") == 0)
-    {
-        printf("Cam on quy khach da su dung dich vu cua chung toi.\n");
+        makeOrder(order);
     }
     else
+        printf("Cam on quy khach da su dung dich vu cua chung toi.\n");
+}
+//function to create and assign order ID to order not file
+void createOrderID(Order *order)
+{
+    order->orderID = 0;
+    //prompt user to enter order ID
+    //what if user enter a character?
+    printf("Vui long nhap ma don hang: ");
+    while (scanf("%d", &order->orderID) != 1 || order->orderID <= 0)
     {
-        printf("Vui long nhap dung lua chon [Y/N]\n");
+        clstd();    
+        printf("Vui long nhap dung ma don hang: ");
     }
-
+    clstd();
 }
