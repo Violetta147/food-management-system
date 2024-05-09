@@ -7,6 +7,12 @@
 #include "file-handler/file-handler.h"
 #include "menufunction.h"
 
+void printMenu(Menu menu);
+int orderDish(Menu menu, OrderItem *orderItem);
+void makeOrder(Order *order);
+void OrderAgain(Order *order);
+void createOrderID(Order *order);
+
 void printMenu(Menu menu)
 {
     printf("\nWelcome to Teddy Restaurant!\n");
@@ -56,13 +62,13 @@ int orderDish(Menu menu, OrderItem *orderItem)
             {
                 orderItem->dish = menu.dishes[i];
                 printf("Vui long nhap so luong mon an: ");
-                while(scanf("%d", &orderItem->quantity) != 1)
-                {   
-                    if(orderItem->quantity <= 0)
-                        {
-                            clstd();
-                            printf("Vui long nhap dung so luong: ");
-                        }
+                while (scanf("%d", &orderItem->quantity) != 1)
+                {
+                    if (orderItem->quantity <= 0)
+                    {
+                        clstd();
+                        printf("Vui long nhap dung so luong: ");
+                    }
                     else
                     {
                         clstd();
@@ -76,51 +82,55 @@ int orderDish(Menu menu, OrderItem *orderItem)
         printf("Mon an voi ma PIN %d khong duoc tim thay vui long nhap lai: ", dishPIN);
         while ((result = scanf("%d", &dishPIN)) != 1)
         {
-            while (getchar() != '\n'); // clear input buffer
+            while (getchar() != '\n')
+                ; // clear input buffer
             printf("\nVui long nhap dung ma PIN: ");
         }
     }
 }
 
-
 void makeOrder(Order *order)
-{   int i = 0;
+{
+    int i = 0;
     int Contflag = 0;
     menu = readMenu("menu.txt");
     OrderItem orderitem;
     order->total = 0;
-    yawm();
+    // yawm();
     system("color 0F");
     printMenu(menu);
     while (true)
-    {   
+    {
         orderDish(menu, &orderitem);
-        //first loop doesn't excute
-        for(int j = 0; j < order->total; j++)
+        // first loop doesn't excute
+        for (int j = 0; j < order->total; j++)
         {
-            if(order->items[j].dish.PIN == orderitem.dish.PIN)
+            if (order->items[j].dish.PIN == orderitem.dish.PIN)
             {
                 order->items[j].quantity += orderitem.quantity;
                 Contflag = 1;
                 break;
             }
         }
-        if(Contflag == 0)
+        if (Contflag == 0)
         {
-        order->items[i] = orderitem;
-        i++;
-        order->total++;
-        order->status = ORDER_PROCESSING;
+            order->items[i] = orderitem;
+            i++;
+            order->total++;
+            strcpy(order->status, ORDER_PROCESSING);
         }
-        else Contflag = 0;
+        else
+            Contflag = 0;
 
         if (ynQuestion("Ban co muon dat mon an khac khong?") == 0)
-        {   
+        {
             if (order->total > MAX_ORDER_ITEMS)
+            {
+                printf("So mon an da dat vuot qua so luong cho phep.\n");
                 break;
+            }
             else
             {
-                createOrderID(order);
                 break;
             }
         }
@@ -141,17 +151,21 @@ void OrderAgain(Order *order)
     else
         printf("Cam on quy khach da su dung dich vu cua chung toi.\n");
 }
-//function to create and assign order ID to order not file
+// function to create and assign order ID to order not file
 void createOrderID(Order *order)
-{
-    order->orderID = 0;
-    //prompt user to enter order ID
-    //what if user enter a character?
-    printf("Vui long nhap ma don hang: ");
-    while (scanf("%d", &order->orderID) != 1 || order->orderID <= 0)
-    {
-        clstd();    
-        printf("Vui long nhap dung ma don hang: ");
-    }
-    clstd();
+{   
+    char buffer[BUFFER_SIZE];
+    bool parsed_correct = true;
+    do
+    {   
+        printf("Vui long nhap Order ID: ");
+        fgets(buffer, BUFFER_SIZE, stdin);
+        parsed_correct = parse_int(buffer, &order->orderID);
+        if(!parsed_correct)
+        {
+            printf("Vui long nhap dung Order ID.\n");
+        }
+    } while(!parsed_correct);
 }
+
+

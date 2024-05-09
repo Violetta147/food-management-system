@@ -9,7 +9,10 @@
 #include "../constant.h"
 #include "../error-handler/error-handler.h"
 
-#define BASE_DATA_PATH "data/"
+#define BASE_DATA_PATH "./data/"
+#define INVOICES_PATH "invoices/"
+#define IS_TIME_TO_WRITE_BACK 1
+
 
 void writeMenu(const char* fileName, Menu menu)
 {
@@ -38,7 +41,6 @@ Menu readMenu(const char* fileName)
     char filePath[MAX_PATH_LENGTH];
     strcpy(filePath, BASE_DATA_PATH);
     strcat(filePath, fileName);
-    printf("%s\n", filePath);
     FILE* menuP = fopen(filePath, "r");
     if (menuP == NULL) {
         printf("Unable to read file.");
@@ -56,23 +58,24 @@ Menu readMenu(const char* fileName)
         {   
             break; 
         }
-        ++menu.total; 
+        ++menu.total;
     }
     fclose(menuP);
     return menu;
 }
 
-void writeOrder(const char* fileName, Order *order, bool isNotAppend)
-{
-    if(isNotAppend == true)
+void writeOrder(const char* filePath, Order *order, bool isAppend)
+{   
+    //neu isNotAppend == true thi ghi de len file
+    if(isAppend == false)
     {   
-        FILE* orderP = fopen(fileName, "w");
+        FILE* orderP = fopen(filePath, "w");
         if (orderP == NULL) 
         {   
-            printf("Unable to open file %s.\n", fileName);
+            printf("Unable to open file %s.\n", filePath);
             return;
         }
-        fprintf(orderP, "%s,%d", order->date, order->orderID);
+        fprintf(orderP, "%s,%d,%s", order->date, order->orderID,order->status);
         for(int i = 0; i < order->total; i++)
         {   
             //serialize
@@ -86,15 +89,16 @@ void writeOrder(const char* fileName, Order *order, bool isNotAppend)
         fclose(orderP);
         return;
     }
-    else if(isNotAppend == false)
+    //neu isNotAppend == false thi ghi tiep vao file
+    else if(isAppend == true)
     {  
-    FILE* orderP = fopen(fileName, "a");
+    FILE* orderP = fopen(filePath, "a");
     if (orderP == NULL) 
     {   
-        printf("Unable to open file %s.\n", fileName);
+        printf("Unable to open file %s.\n", filePath);
         return;
     }
-    fprintf(orderP, "%s,%d", order->date, order->orderID);
+    fprintf(orderP, "%s,%d,%s", order->date, order->orderID,order->status);
     for(int i = 0; i < order->total; i++)
     {   
         //serialize
@@ -109,28 +113,94 @@ void writeOrder(const char* fileName, Order *order, bool isNotAppend)
     return;
     }
 }
-//bool function to signify if this is the moment 
-//to write all orders back to file
-bool isTimeToWriteBack()
+//function to reset all orders in file to empty
+void resetOrders(const char* filePath)
 {
-    return true;
-}
-
-Order readOrder(const char* fileName)
-{
-
-    FILE* orderP = fopen(fileName, "r");
+    FILE* orderP = fopen(filePath, "w");
     if (orderP == NULL) {
-        printf("Unable to read file.");
+        printf("Unable to open file.");
         exit(-1);
     } 
+    fclose(orderP);
+}
 
+int getListOrders(char listFiles[MAX][MAX], int *total) {
+    char filePath[MAX_PATH_LENGTH];
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, INVOICES_PATH);
+    strcat(filePath, "index.txt");
+    printf("File path: %s\n", filePath);
+    FILE* indexFile = fopen(filePath, "r");
+    if (indexFile == NULL) {
+        printf("Unable to read file.\n");
+        exit(-1);
+    }
+
+    *total = 0;
+    while(true) {
+        char invoiceFileName[MAX];
+        int check = fscanf(indexFile, "%s\n", invoiceFileName);
+        if(check != 1)
+        {   
+            fscanf(indexFile, "\n");
+            break;
+        }
+
+        strcpy(listFiles[*total], invoiceFileName);
+        ++*total; 
+    }
+    fclose(indexFile);
+    return 0;
+}
+//function to create one order index file each time to store order file name
+void createOrderIndex(const char* fileName)
+{
+    printf("Creating order index file...\n");
+    printf("File name: %s\n", fileName);
+    char filePath[MAX_PATH_LENGTH]; 
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, INVOICES_PATH);
+    strcat(filePath, "index.txt");
+    FILE* indexFile = fopen(filePath, "r");
+    if (indexFile == NULL) {
+        printf("Unable to open file.");
+        exit(-1);
+    }
+    //what if index already exists?
+    char fileNameWithNewLine[MAX_PATH_LENGTH];
+    strcpy(fileNameWithNewLine, fileName);
+    strcat(fileNameWithNewLine, "\n");
+    char line[MAX_PATH_LENGTH];
+    while(fgets(line, sizeof(line), indexFile))
+    {
+        if(strcmp(line, fileNameWithNewLine) == 0)
+        {   
+            //the content already exists, no need to write
+            printf("Index already exists.\n");
+            fclose(indexFile);
+            return; 
+        }
+    }
+    //the content doesn't exist, close and reopen the file in "a"
+    fclose(indexFile);
+    indexFile = fopen(filePath, "a");         
+    if (indexFile == NULL) {
+        printf("Unable to open file.");
+        exit(-1);
+    }
+    fprintf(indexFile, "%s\n", fileName);
+    fclose(indexFile);
+}
+
+
+Order readOrder(FILE* orderP)
+{
     Order order;
     order.total = 0;
-    int check = fscanf(orderP, "%[^,],%d", order.date, &order.orderID);
-    if(check != 2)
+    int check = fscanf(orderP, "%[^,],%d,%[^,]", order.date, &order.orderID, order.status);
+    if(check != 3)
     {
-        printf("Unable to read file.");
+        printf("Unable to read file.\n");
         exit(-1);
     }
     while(true) {
@@ -139,39 +209,52 @@ Order readOrder(const char* fileName)
                          order.items[order.total].dish.name,
                           &order.items[order.total].quantity,
                            &order.items[order.total].dish.price);
-        if(check != 4)
+        if(check != 4 || order.total == 4)
         {   
-            break; 
+            break;
         }
-        ++order.total; 
+        ++order.total;
     }
-    //check eof
+    fscanf(orderP, "\n");
     return order;
-    fclose(orderP);
 }
-//function to scan all orders from file
-//to find unpaid bill with a specific orderID
+
 
 
 //function to create string of file path for invoices sorted by date
 char* createInvoiceFilePath(char* date)
 {
-    char filePath[MAX_PATH_LENGTH];
+    char* filePath = (char*)malloc(MAX_PATH_LENGTH);
+    if(filePath == NULL) 
+    {
+        printf("Unable to allocate memory.");
+        exit(-1);
+    }
     strcpy(filePath, BASE_DATA_PATH);
-    strcat(filePath, "invoices/");
+    strcat(filePath, INVOICES_PATH);
     strcat(filePath, date);
     strcat(filePath, ".txt");
     return filePath;
 }
 //function to create date string for invoice file name
 //without using time.h
-char* createDate()
+char* createDate() 
 {
     //date will be in format dd-mm-yyyy
     //date will be scanf from user
-    char* date = (char*)malloc(12);
+    char* date = (char*)malloc(10); // i made change here
+    if(date == NULL) 
+    {
+        printf("Unable to allocate memory.");
+        exit(-1);
+    }
     printf("Nhap ngay thang nam (dd-mm-yyyy): ");
     scanf("%s", date);
+    while(strlen(date) != 10 || date[2] != '-' || date[5] != '-' || date[10] != '\0' || !isValidDate(dateToInt(date)))
+    {   
+        printf("Nhap lai ngay thang nam (dd-mm-yyyy): ");
+        scanf("%s", date);
+    }
     clstd();
     return date;
 }
@@ -180,9 +263,13 @@ char* createDate()
 //to count number of orders
 int countOrders(const char* fileName)
 {   
+    char filePath[MAX_PATH_LENGTH];
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, INVOICES_PATH);
+    strcat(filePath, fileName);
     int orderCount = 0;
     char buffer[1000];
-    FILE* orderP = fopen(fileName, "r");
+    FILE* orderP = fopen(filePath, "r");
     if (orderP == NULL) {
         printf("Unable to read file.");
         return -1;
@@ -195,6 +282,4 @@ int countOrders(const char* fileName)
     return orderCount;
 }
 
-//update an order at a specific orderID by rewrite all orders to file 
-//using writeOrder function
 

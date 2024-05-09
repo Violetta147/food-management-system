@@ -16,9 +16,10 @@ typedef struct OrderItem //old Pick
 // an Order
 typedef struct Order 
 {   
-    char date[12]; // dd-mm-yyyy
+    char date[MAX]; // dd-mm-yyyy
     int orderID;
     OrderItem items[MAX_ORDER_ITEMS];
     int total; 
-    char* status; 
+    char status[MAX]; 
 } Order;
+

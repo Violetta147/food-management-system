@@ -81,3 +81,96 @@ void Ans()
         else printf("Invalid Command.\n");
     }
 }
+//function to statistically calculate the orders from a date to another date
+//getListOrders consists of all the file index date.txt
+//dateToInt
+//countOrders counts the number of orders in a file
+void stat()
+{   
+    //prompt user to input two dates
+    char* date1 = createDate();
+    char* date2 = createDate();
+    if(isDateExist(date1, date2) == false)
+    {
+        free(date1);
+        free(date2);
+        return;
+    }
+    //if date exists
+    char TimeChoice[1024];
+    int time_choice;
+    bool parsed_time = true;
+    do
+    {
+        printf("1. Thong ke doanh thu trong khoang thoi gian\n");
+        printf("2. Thong ke mon an duoc yeu thich trong khoang thoi gian\n");
+        printf("3. Thoat\n");
+        printf("Chon chuc nang: ");
+        fgets(TimeChoice, 1024, stdin);
+        parsed_time = parse_int(TimeChoice,&time_choice);
+        if(!parsed_time)
+        {
+            printf("Invalid command\n");
+        }
+    }while(!parsed_time || (time_choice < 1 || time_choice > 4));
+
+    if(time_choice == 3)
+    {
+        free(date1);
+        free(date2);
+        yawm();
+        return;
+    }
+
+    if(time_choice == 1)
+    {
+        for(int i = 0)
+    }
+
+
+}
+    
+
+
+
+
+
+
+
+
+
+    free(date1);
+    free(date2);
+}
+
+//function to statistically calculate the popularity of dishes from date to date
+void pop()
+{
+    char* date1 = createDate();
+    char* date2 = createDate();
+    if(isDateExist(date1, date2) == false)
+    {
+        free(date1);
+        free(date2);
+        return;
+    }
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+    
+//function to start a new day with the cashier entering a transaction code

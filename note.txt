@@ -140,8 +140,43 @@ void updateOrder(const char* fileName, Order order[], int orderID)
     }
     fclose(orderP);
 }
+char* filePath = (char*)malloc(MAX_PATH_LENGTH);
+    if(filePath == NULL)
+    {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
+    // strcpy(filePath,createInvoiceFilePath(date));
 
+char listOrderFiles[MAX][MAX];
+    int orderFilesTotal = 0;
+    getListOrders(listOrderFiles, &orderFilesTotal);
+    
+    for (int i = 0; i < orderFilesTotal; i++)
+    {   
+        Order order = readOrder(listOrderFiles[i],);
+        printf("Order ID: %d\n", order.orderID);
+        printf("Date: %s\n", order.date);
+        printf("Status: %s\n", order.status);
+        printf("Total: %d\n", order.total);
+        for(int i = 0; i < order.total; i++)
+        {
+            printf("Dish %d\n", i + 1);
+            printf("PIN: %d\n", order.items[i].dish.PIN);
+            printf("Name: %s\n", order.items[i].dish.name);
+            printf("Price: %.0f\n", order.items[i].dish.price);
+            printf("Quantity: %d\n", order.items[i].quantity);
+        }
+    }
 
+mã orderID có các giá trị rác làm cho orderID bị sai lệch
+dùng 2 for để compare string or not?
+neu co index ma ko co file order thi se read failed.
+write index bi lap lai
+hoa don chua thanh toan bi thieu? 
+123a!!
+reset 0 ? what to with garvage value 
 
-
-
+xoa het 
+customize 1
+add how many at once?
