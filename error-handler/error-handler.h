@@ -7,6 +7,7 @@
 #include <stdbool.h> 
 #include "strings.h"
 #include "../structs/dish.h"
+#include "../file-handler/file-handler.h"
 #define BUFFER_SIZE 4096
 
 //function prototypes
@@ -24,7 +25,8 @@ void arg();
 bool isRepeatOrderID(Order orders[100], int orderID);
 bool isNotExistOrderID(Order orders[100], int orderID);
 bool isValidOrderID(int orderID);
-bool parse_int(char *string, int *integer);
+int getListOrders(char listFiles[MAX][MAX], int *total);
+bool parseInt(char *string, int *integer);
 char* orderIDConvert(int orderID);
 bool isEOF(FILE* file);
 bool isLeapYear(int year);
@@ -179,7 +181,7 @@ bool isNotExistOrderID(Order orders[100], int orderID)
     return true;
 }
 //function to check if orderID is valid
-bool parse_int(char *string, int *integer)
+bool parseInt(char *string, int *integer)
 {   
     if(integer == NULL)
     {
@@ -230,7 +232,7 @@ bool parse_int(char *string, int *integer)
         return false;
     }
     *integer = atoi(integer_buffer);
-    if(*integer == 0 || *integer > 9999) 
+    if(*integer == 0) 
     {   
         return false;
     }
@@ -239,9 +241,9 @@ bool parse_int(char *string, int *integer)
 //function to check if integer is negative or not
 bool isValidOrderID(int orderID)
 {
-    if(orderID < 0 || orderID == 0 || orderID > 9999)
-    {
-        printf("Ma don hang khong the am, bang 0 hoac lon hon 9999\n");
+    if(orderID <= 0)
+    {   
+        printf("Ma don hang khong the am hoac bang 0\n");
         return false;
     }
     return true;
@@ -301,22 +303,6 @@ bool isValidDate(int date)
     return true;
 }
 //function to take 08-05-2024 as the start date , check if newly created day cannot be earlier than the start date
-bool isDateEarlier(char* date)
-{
-    int timequantity = 0;
-    timequantity += dateToInt(date);
-    if(timequantity < 20210508)
-    {
-        printf("Ngay khong the nho hon ngay hien tai.\n");
-        return true;
-    }
-    if(timequantity - )
-}
-//function to take the value of current day 
-int getCurrentDate()
-{
-    
-}
 //function to check if a date exists in the file
 //date is in the format dd-mm-yyyy and it is a string
 bool isDateExist(char* date1, char* date2)

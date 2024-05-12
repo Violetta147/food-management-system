@@ -180,3 +180,26 @@ reset 0 ? what to with garvage value
 xoa het 
 customize 1
 add how many at once?
+for (int i = 0; i < menu.total; i++)
+        {
+            if (dishPIN == menu.dishes[i].PIN)
+            {
+                orderItem->dish = menu.dishes[i];
+                printf("Vui long nhap so luong mon an: ");
+                while (scanf("%d", &orderItem->quantity) != 1)
+                {
+                    if (orderItem->quantity <= 0)
+                    {
+                        clstd();
+                        printf("Vui long nhap dung so luong: ");
+                    }
+                    else
+                    {
+                        clstd();
+                        printf("Vui long nhap dung so luong: ");
+                    }
+                }
+                printf("Ban da chon mon %s voi so luong %d va gia %0.0f\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.price);
+                return 0;
+            }
+        }

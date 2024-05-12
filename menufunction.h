@@ -226,16 +226,12 @@ void custom(Menu menu)
         printf("Enter the PIN of the dish you want to change: ");
         char buffer[BUFFER_SIZE];
         fgets(buffer, BUFFER_SIZE, stdin);
-        parsed_successfully = parse_int(buffer, &FoodPIN);
+        parsed_successfully = parseInt(buffer, &FoodPIN);
         if(!parsed_successfully)
         {
             printf("Invalid PIN or Repeated.\n");
         }
-    }while(!parsed_successfully || isRepeatPIN(menu, FoodPIN) == false);
-    if()
-   
-   
-   
+    }while(!parsed_successfully || isRepeatPIN(menu, FoodPIN) == false);   
 }
 
 int ynQuestion(const char *question)
@@ -249,5 +245,46 @@ int ynQuestion(const char *question)
         if (isYes(tmp)) return true;
         if (isNo(tmp)) return false;
         printf("Vui long nhap dung lua chon [Y/N]: ");
+    }
+}
+//input string + ask question
+void input(const char *question, char *str)
+{
+    printf("%s: ", question);
+    scanf("%[^\n]%*c", str);
+    fflush(stdin);
+}
+
+void inputInt(const char *question, int *num)
+{
+    bool isValid = false;
+    while (!isValid)
+    {
+        printf("%s: ", question);
+        
+        char tmp[MAX_STRING_LENGTH];
+        fgets(tmp, MAX_STRING_LENGTH, stdin);
+        fflush(stdin);
+
+        bool isValidIntegerLength = strlen(tmp) < 10; // 2^32 - 1 has 10 digits
+        bool isValidInteger = parseInt(tmp, num);
+        printf("num: %d\n", *num);
+        printf("isValidInteger: %d\n", isValidInteger);
+        isValid = isValidInteger && isValidIntegerLength;
+
+        if (!isValid)
+        {
+            printf("Vui long nhap so nguyen!\n");
+        }
+    }
+}
+
+void inputPositiveInt(const char *question, int *num)
+{
+    inputInt(question, num);
+    while (*num <= 0)
+    {
+        printf("Vui long nhap so nguyen duong!\n");
+        inputInt(question, num);
     }
 }

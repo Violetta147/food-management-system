@@ -16,3 +16,9 @@ typedef struct Menu
 } Menu;
 
 Menu menu;
+
+typedef struct Popularity
+{
+    Dish Dish;
+    int count;
+} Popularity;

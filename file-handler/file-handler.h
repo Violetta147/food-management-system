@@ -13,6 +13,18 @@
 #define INVOICES_PATH "invoices/"
 #define IS_TIME_TO_WRITE_BACK 1
 
+//function prototypes
+void writeMenu(const char* fileName, Menu menu);
+Menu readMenu(const char* fileName);
+void writeOrder(const char* filePath, Order *order, bool isAppend);
+void resetOrders(const char* filePath);
+int getListOrders(char listFiles[MAX][MAX], int *total);
+void createOrderIndex(const char* fileName);
+Order readOrder(FILE* orderP);
+char* createInvoiceFilePath(char* date);
+char* createDate();
+int countOrders(const char* fileName);
+
 
 void writeMenu(const char* fileName, Menu menu)
 {
@@ -222,7 +234,7 @@ Order readOrder(FILE* orderP)
 
 
 //function to create string of file path for invoices sorted by date
-char* createInvoiceFilePath(char* date)
+char* createInvoiceFilePath(char date[])
 {
     char* filePath = (char*)malloc(MAX_PATH_LENGTH);
     if(filePath == NULL) 
@@ -234,6 +246,8 @@ char* createInvoiceFilePath(char* date)
     strcat(filePath, INVOICES_PATH);
     strcat(filePath, date);
     strcat(filePath, ".txt");
+    printf("\n");
+    printf("File path: %s\n", filePath);
     return filePath;
 }
 //function to create date string for invoice file name

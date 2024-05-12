@@ -7,33 +7,49 @@
 #include "customer.h"
 #include "billcalculate.h"
 #include "menufunction.h"
+#include "admin.h"
 
 int main()
-{
+{    
     Order order;
     bool isLoop = true;
-    char bancomuontieptuc[30] = "Ban co muon tiep tuc khong?";
+    float revenue = 0;
     while(isLoop)
     {
         float sum;
         float sale;
         float total;
-
         makeOrder(&order);
-        if(order.items[0].dish.PIN == 0)
+        int iszero;
+        for(int i = 0; i < 10; i++)
         {
-            
-            isLoop = ynQuestion(bancomuontieptuc);
-            continue;
+            if(order.items[i].dish.PIN == 0)
+            {
+                iszero = i;
+                break;
+            }
         }
-        calculateBill(&order, &sum, &sale, &total);
-        printf("Tong tien: %.0f\n", sum);
-        printf("Khuyen mai: %.0f\n", sale);
-        printf("Thanh tien: %.0f\n", total);
-        isLoop = ynQuestion(bancomuontieptuc);
+        if(order.items[iszero].dish.PIN == 0)
+        {
+            isLoop = ynQuestion("Ban co muon tiep tuc khong?");
+        }
+        for(int i = 0; i < 10; i++)
+        {
+            if(order.items[i].dish.PIN != 0)
+            {
+                calculateBill(&order, &sum, &sale, &total);
+                printf("Tong tien: %.0f\n", sum);
+                printf("Khuyen mai: %.0f\n", sale);
+                printf("Thanh tien: %.0f\n", total);
+                break;
+                
+            }
+        }   
+            isLoop = ynQuestion("Ban co muon tiep tuc khong?");
     }
 
     isLoop = true;
+    calculate_popularity_revenue(&revenue);
     while(isLoop)
     {
        bool ContinuePaying = UnpaidBill();
@@ -47,4 +63,5 @@ int main()
        }
        isLoop = ynQuestion("Ban co muon tiep tuc khong?");
     }
+    return 0;
 }

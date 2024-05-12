@@ -10,8 +10,9 @@
 void printMenu(Menu menu);
 int orderDish(Menu menu, OrderItem *orderItem);
 void makeOrder(Order *order);
-void OrderAgain(Order *order);
+void orderAgain(Order *order);
 void createOrderID(Order *order);
+
 
 void printMenu(Menu menu)
 {
@@ -36,21 +37,11 @@ void printMenu(Menu menu)
 
 int orderDish(Menu menu, OrderItem *orderItem)
 {
-
-    printf("Vui long chon mon an theo ma PIN: ");
-    int dishPIN;
-    int result; // truyen du lieu dishPIN cho result de check
-    while ((result = scanf("%d", &dishPIN)) != 1)
-    {
-        while (getchar() != '\n')
-            ; // clear input buffer
-        printf("Vui long nhap dung ma PIN: ");
-    }
-    clstd();
+    inputPositiveInt("Vui long chon PIN mon an", &orderItem->dish.PIN);
 
     while (true)
     {
-        if (dishPIN == 0)
+        if (orderItem->dish.PIN == 0)
         {
             printf("Ban da huy viec chon mon an\n");
             return 1;
@@ -58,34 +49,15 @@ int orderDish(Menu menu, OrderItem *orderItem)
 
         for (int i = 0; i < menu.total; i++)
         {
-            if (dishPIN == menu.dishes[i].PIN)
+            if (orderItem->dish.PIN == menu.dishes[i].PIN)
             {
                 orderItem->dish = menu.dishes[i];
-                printf("Vui long nhap so luong mon an: ");
-                while (scanf("%d", &orderItem->quantity) != 1)
-                {
-                    if (orderItem->quantity <= 0)
-                    {
-                        clstd();
-                        printf("Vui long nhap dung so luong: ");
-                    }
-                    else
-                    {
-                        clstd();
-                        printf("Vui long nhap dung so luong: ");
-                    }
-                }
+                inputPositiveInt("Vui long nhap so luong", &orderItem->quantity);
                 printf("Ban da chon mon %s voi so luong %d va gia %0.0f\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.price);
                 return 0;
             }
         }
-        printf("Mon an voi ma PIN %d khong duoc tim thay vui long nhap lai: ", dishPIN);
-        while ((result = scanf("%d", &dishPIN)) != 1)
-        {
-            while (getchar() != '\n')
-                ; // clear input buffer
-            printf("\nVui long nhap dung ma PIN: ");
-        }
+        printf("Mon an voi ma PIN %d khong duoc tim thay vui long nhap lai: ", orderItem->dish.PIN);
     }
 }
 
@@ -137,7 +109,7 @@ void makeOrder(Order *order)
     }
 }
 
-void OrderAgain(Order *order)
+void orderAgain(Order *order)
 {
 
     if (ynQuestion("Ban co muon dat order khac khong?"))
@@ -153,19 +125,17 @@ void OrderAgain(Order *order)
 }
 // function to create and assign order ID to order not file
 void createOrderID(Order *order)
-{   
+{
     char buffer[BUFFER_SIZE];
-    bool parsed_correct = true;
+    bool parsedCorrect = true;
     do
-    {   
+    {
         printf("Vui long nhap Order ID: ");
         fgets(buffer, BUFFER_SIZE, stdin);
-        parsed_correct = parse_int(buffer, &order->orderID);
-        if(!parsed_correct)
+        parsedCorrect = parseInt(buffer, &order->orderID);
+        if (!parsedCorrect)
         {
             printf("Vui long nhap dung Order ID.\n");
         }
-    } while(!parsed_correct);
+    } while (!parsedCorrect);
 }
-
-

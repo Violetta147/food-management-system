@@ -75,7 +75,6 @@ void calculateBill(Order *order, float *sum, float *sale, float *total)
         for (int i = 0; i < orderFilesTotal; i++)
         {
             int numOrder = countOrders(listOrderFiles[i]);
-            int numOrder2 = countOrders(listOrderFiles[i]);
             char filePath[MAX_PATH_LENGTH];
             strcpy(filePath, BASE_DATA_PATH);
             strcat(filePath, INVOICES_PATH);
@@ -87,8 +86,8 @@ void calculateBill(Order *order, float *sum, float *sale, float *total)
                 printf("Unable to read file\n.");
                 exit(-1);
             }
-            for (int j = 0; j < numOrder2; j++)
-            {
+            for (int j = 0; j < numOrder; j++)
+            {   
 
                 TempOrders[j + totalOrders] = readOrder(orderP);
             }
