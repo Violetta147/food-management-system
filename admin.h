@@ -83,7 +83,7 @@ void Ans()
     }
 }
 //function to statistically calculate the popularity of dishes from date to date
-void calculate_popularity_revenue(float* revenue)
+void calculate_popularity_revenue(int* revenue)
 {   
     int flagTime = 0;
     char date1[MAX];
@@ -238,5 +238,5 @@ void calculate_popularity_revenue(float* revenue)
         }
     }
     //print the total revenue
-    printf("Total revenue from %s to %s: %.0f\n", date1, date2, *revenue);
+    printf("Total revenue from %s to %s: %d\n", date1, date2, *revenue);
 }

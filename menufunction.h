@@ -143,7 +143,7 @@ void extend(Menu menu)
             }
                 clstd();
                 printf("Food %d price: ", i+1);
-            while(scanf("%f", &add[i].price) != 1 || add[i].price <= 0)
+            while(scanf("%d", &add[i].price) != 1 || add[i].price <= 0)
             {
                 clstd();
                 printf("Invalid price.\n");
@@ -151,7 +151,7 @@ void extend(Menu menu)
             }
                 clstd();
                 printf("Food %d PIN: ", i+1);
-                while(scanf("%f", &add[i].PIN) != 1 || isRepeatPIN(menu, add[i].PIN) == true || isSamePIN(add, i) == true)
+                while(scanf("%d", &add[i].PIN) != 1 || isRepeatPIN(menu, add[i].PIN) == true || isSamePIN(add, i) == true)
                 {
                     clstd();
                     printf("The PIN is already taken or invalid. Please try another one.\n");

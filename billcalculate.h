@@ -9,33 +9,32 @@
 #include "constant.h"
 #include "menufunction.h"
 
-float payment(int total)
+int payment(int total)
 {
     int change = 0;  // tien thua thoi lai
     int owe = total; // tien quy khach no, owe is temp
     int paid = 0;    // tien quy khach tra
 
     inputPositiveInt("Vui long nhap so tien quy khach can tra", &paid);
-    
     do
     {
         if (paid >= owe)
         {
             change = floor(paid - owe);
-            printf("Tien thoi cua quy khach la: %.0f\n", change);
+            printf("Tien thoi cua quy khach la: %d\n", change);
             break;
         }
         else
         {
             owe -= paid;
-            printf("Quy khach tra tien con thieu, vui long tra them %.0f: ", owe);
+            printf("Quy khach tra tien con thieu, vui long tra them %d: ", owe);
         }
     } while (owe > 0);
 
     return change;
 }
 
-void calculateBill(Order *order, float *sum, float *sale, float *total)
+void calculateBill(Order *order, int *sum, int *sale, int *total)
 {
     printf("Tinh tien hoa don: \n");
     *sum = 0;
@@ -113,7 +112,7 @@ void calculateBill(Order *order, float *sum, float *sale, float *total)
 
     for (int i = 0; i < order->total; i++)
     {
-        printf("%17d %17s %17.0f %17d %17.0f\n",
+        printf("%17d %17s %17d %17d %17d\n",
                order->items[i].dish.PIN,
                order->items[i].dish.name,
                order->items[i].dish.price,
@@ -122,9 +121,9 @@ void calculateBill(Order *order, float *sum, float *sale, float *total)
     }
 
     printf("\033[0;33m");
-    printf("%51s%38.0f\n", "Tong:", *sum);
-    printf("%57s%32.0f\n", "Khuyen mai:", *sale);
-    printf("%57s%32.0f\n", "Thanh tien:", *total);
+    printf("%51s%38d\n", "Tong:", *sum);
+    printf("%57s%32d\n", "Khuyen mai:", *sale);
+    printf("%57s%32d\n", "Thanh tien:", *total);
     printf("\033[m");
     while (true)
     {
@@ -178,7 +177,7 @@ bool UnpaidBill()
     char listOrderFiles[MAX][MAX];
     int numOrder = 0;
     int OrderIndex = 0;
-    float OweNeedToPay[100]; //tam thoi de 100, sau nay se thay doi
+    int OweNeedToPay[100]; //tam thoi de 100, sau nay se thay doi
     int flag = 0;
     getListOrders(listOrderFiles, &orderFilesTotal);
     for(OrderIndex = 0; OrderIndex < orderFilesTotal; OrderIndex++)
@@ -241,7 +240,7 @@ bool UnpaidBill()
             //access one order's items
             for (j = 0; j < TempOrders[i].total; j++)
             {
-                printf("%17d %17s %17.0f %17d %17.0f\n",
+                printf("%17d %17s %17d %17d %17d\n",
                        TempOrders[i].items[j].dish.PIN,
                        TempOrders[i].items[j].dish.name,
                        TempOrders[i].items[j].dish.price,
@@ -250,14 +249,14 @@ bool UnpaidBill()
                 OweNeedToPay[i] += TempOrders[i].items[j].dish.price * TempOrders[i].items[j].quantity;
             }
                 printf("\033[0;33m");
-                printf("%51s%38.0f\n", "Tong:", OweNeedToPay[i]);
+                printf("%51s%38d\n", "Tong:", OweNeedToPay[i]);
                 if(OweNeedToPay[i] >= SALE)
                 {
-                    printf("%57s%32.0f\n", "Khuyen mai:", OweNeedToPay[i] * 25 / 100);
-                    printf("%57s%32.0f\n", "Thanh tien:", OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
+                    printf("%57s%32d\n", "Khuyen mai:", OweNeedToPay[i] * 25 / 100);
+                    printf("%57s%32d\n", "Thanh tien:", OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
                 }
                 else
-                printf("%57s%32.0f\n", "Thanh tien:", OweNeedToPay[i]);
+                printf("%57s%32d\n", "Thanh tien:", OweNeedToPay[i]);
                 printf("\033[m");
         }
     }

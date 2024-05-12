@@ -19,12 +19,12 @@ int main()
 
     Order order;
     bool isLoop = true;
-    float revenue = 0;
+    int revenue = 0;
     while(isLoop)
     {
-        float sum;
-        float sale;
-        float total;
+        int sum;
+        int sale;
+        int total;
         makeOrder(&order);
         int iszero;
         for(int i = 0; i < 10; i++)
@@ -44,9 +44,9 @@ int main()
             if(order.items[i].dish.PIN != 0)
             {
                 calculateBill(&order, &sum, &sale, &total);
-                printf("Tong tien: %.0f\n", sum);
-                printf("Khuyen mai: %.0f\n", sale);
-                printf("Thanh tien: %.0f\n", total);
+                printf("Tong tien: %d\n", sum);
+                printf("Khuyen mai: %d\n", sale);
+                printf("Thanh tien: %d\n", total);
                 break;
                 
             }

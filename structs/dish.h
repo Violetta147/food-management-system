@@ -6,7 +6,7 @@ typedef struct Dish
 {
     int PIN;
     char name[MAX];
-    float price;
+    int price;
 } Dish;
 
 typedef struct Menu

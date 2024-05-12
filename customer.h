@@ -30,7 +30,7 @@ void printMenu(Menu menu)
 
     for (int i = 0; i < menu.total; i++)
     {
-        printf("%17d  %17s  %14.0f \n", menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].price);
+        printf("%17d  %17s  %14d \n", menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].price);
     }
     printf("\n");
 }
@@ -53,7 +53,7 @@ int orderDish(Menu menu, OrderItem *orderItem)
             {
                 orderItem->dish = menu.dishes[i];
                 inputPositiveInt("Vui long nhap so luong", &orderItem->quantity);
-                printf("Ban da chon mon %s voi so luong %d va gia %0.0f\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.price);
+                printf("Ban da chon mon %s voi so luong %d va gia %d\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.price);
                 return 0;
             }
         }

@@ -93,7 +93,7 @@ void writeOrderAtLine(const char* fileName, Order *order, int line)
             for(int i = 0; i < order->total; i++)
             {   
                 //serialize
-                fprintf(tempFile, ",%d,%s,%d,%.0f",
+                fprintf(tempFile, ",%d,%s,%d,%d",
                         order->items[i].dish.PIN,
                         order->items[i].dish.name,
                         order->items[i].quantity,
@@ -164,7 +164,7 @@ char listOrderFiles[MAX][MAX];
             printf("Dish %d\n", i + 1);
             printf("PIN: %d\n", order.items[i].dish.PIN);
             printf("Name: %s\n", order.items[i].dish.name);
-            printf("Price: %.0f\n", order.items[i].dish.price);
+            printf("Price: %d\n", order.items[i].dish.price);
             printf("Quantity: %d\n", order.items[i].quantity);
         }
     }

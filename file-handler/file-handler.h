@@ -40,7 +40,7 @@ void writeMenu(const char* fileName, Menu menu)
     }
     for(int i = 0; i < menu.total; i++)
     {
-        fprintf(menuP, "%d || %s || %.0f\n",
+        fprintf(menuP, "%d || %s || %d\n",
                  menu.dishes[i].PIN,
                  menu.dishes[i].name,
                  menu.dishes[i].price);
@@ -62,7 +62,7 @@ Menu readMenu(const char* fileName)
     Menu menu;
     menu.total = 0;
     while(true) {
-        int check = fscanf(menuP, "%d || %s || %f\n", 
+        int check = fscanf(menuP, "%d || %s || %d\n", 
                             &menu.dishes[menu.total].PIN,
                              menu.dishes[menu.total].name,
                               &menu.dishes[menu.total].price);
@@ -91,7 +91,7 @@ void writeOrder(const char* filePath, Order *order, bool isAppend)
         for(int i = 0; i < order->total; i++)
         {   
             //serialize
-            fprintf(orderP, ",%d,%s,%d,%.0f",
+            fprintf(orderP, ",%d,%s,%d,%d",
                     order->items[i].dish.PIN,
                     order->items[i].dish.name,
                     order->items[i].quantity,
@@ -114,7 +114,7 @@ void writeOrder(const char* filePath, Order *order, bool isAppend)
     for(int i = 0; i < order->total; i++)
     {   
         //serialize
-        fprintf(orderP, ",%d,%s,%d,%.0f",
+        fprintf(orderP, ",%d,%s,%d,%d",
                 order->items[i].dish.PIN,
                 order->items[i].dish.name,
                 order->items[i].quantity,
@@ -216,7 +216,7 @@ Order readOrder(FILE* orderP)
         exit(-1);
     }
     while(true) {
-        check = fscanf(orderP, ",%d,%[^,],%d,%f", 
+        check = fscanf(orderP, ",%d,%[^,],%d,%d", 
                         &order.items[order.total].dish.PIN,
                          order.items[order.total].dish.name,
                           &order.items[order.total].quantity,
