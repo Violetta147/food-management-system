@@ -9,17 +9,16 @@
 #include "constant.h"
 #include "menufunction.h"
 
-float payment(float total)
+float payment(int total)
 {
-    float change = 0;  // tien thua thoi lai
-    float owe = total; // tien quy khach no, owe is temp
-    float paid = 0;    // tien quy khach tra
+    int change = 0;  // tien thua thoi lai
+    int owe = total; // tien quy khach no, owe is temp
+    int paid = 0;    // tien quy khach tra
 
-    printf("Vui long nhap so tien quy khach can tra: ");
-
+    inputPositiveInt("Vui long nhap so tien quy khach can tra", &paid);
+    
     do
     {
-        scanf("%f", &paid);
         if (paid >= owe)
         {
             change = floor(paid - owe);
@@ -160,12 +159,6 @@ void calculateBill(Order *order, float *sum, float *sale, float *total)
     }
 
     free(date);
-    // printf("adavas");
-    // free(order); // potentially memory leak
-    // printf("xx"); //it prevents the first isLoop
-    // free(sum);
-    // free(sale);
-    // free(total);
 }
 
 // Function to print unpaid bills and ask user to pay

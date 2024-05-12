@@ -11,6 +11,12 @@
 
 int main()
 {    
+    // char string[100] = "\t - 123";
+    // int number;
+    // bool isValid = parseInt(string, &number);
+    // printf("Is valid: %d\n", isValid);
+    // printf("Number: %d\n", number);
+
     Order order;
     bool isLoop = true;
     float revenue = 0;

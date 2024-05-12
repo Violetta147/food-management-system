@@ -183,61 +183,85 @@ bool isNotExistOrderID(Order orders[100], int orderID)
 //function to check if orderID is valid
 bool parseInt(char *string, int *integer)
 {   
-    if(integer == NULL)
-    {
-        printf("Integer pointer is NULL\n");
-    }
-    if(string == NULL)
-    {
-        printf("String is NULL.\n");
-    }
-    int i = 0;
-    while(isspace(string[i])) i++;
+    int stringlength = strlen(string);
     
-    int length = strlen(string);
-    
-    if(length == i)
+    // Remove leading white spaces
+    int startSliceIndex = 0;
+    for (int i = 0; i < stringlength; i++)
     {   
+        if (string[i] != ' ' && string[i] != '\t' && string[i] != '\n')
+        {
+            startSliceIndex = i;
+            break;
+        }
+    }
+
+    // Remove trailing white spaces
+    int endSliceIndex = stringlength - 1;
+    for (int i = stringlength - 1; i >= 0; i--)
+    {
+        if (string[i] != ' ' && string[i] != '\t' && string[i] != '\n')
+        {
+            endSliceIndex = i;
+            break;
+        }
+    }
+    
+    // Extract the string without white spaces
+    char removedWhiteSpaceString[MAX_STRING_LENGTH];
+    int removedWhiteSpaceStringLength = 0;
+    for (int i = startSliceIndex; i <= endSliceIndex; i++)
+    {
+        removedWhiteSpaceString[removedWhiteSpaceStringLength] = string[i];
+        removedWhiteSpaceStringLength++;
+    }
+
+    // Check if string is negative number
+    bool isNegative = false;
+    if (removedWhiteSpaceString[0] == '-')
+    {
+        isNegative = true;
+
+        // Remove the negative sign
+        removedWhiteSpaceStringLength--;
+        for (int i = 0; i < removedWhiteSpaceStringLength; i++)
+        {
+            removedWhiteSpaceString[i] = removedWhiteSpaceString[i + 1];
+        }
+    }
+
+    // Check if the string is empty
+    if (removedWhiteSpaceStringLength == 0)
+    {
         return false;
     }
-    char integer_buffer[BUFFER_SIZE];
-
-    int integer_chars = 0;
-
-    if(string[i] == '-')
-    {   
-        integer_buffer[integer_chars] = '-';
-        integer_chars++;
-        i++;
-    }
-    if(!isdigit(string[i])) 
-    {   
-        return false;
-    }
-    while(i < length && !isspace(string[i]))
+    
+    // Check if the string contains only digits by using ACSII code
+    for (int i = 0; i < removedWhiteSpaceStringLength; i++)
     {
-        if(!isdigit(string[i]))
-        {   
+        if (removedWhiteSpaceString[i] < '0' || removedWhiteSpaceString[i] > '9')
+        {
             return false;
         }
-        integer_buffer[integer_chars] = string[i];
-        integer_chars++;
-        i++;
     }
-    integer_buffer[integer_chars] = '\0';
-    while(isspace(string[i])) i++;
 
-    if(string[i] != '\0') 
+    // Convert the string to an integer by using ASCII code
+    *integer = 0;
+    for (int i = 0; i < removedWhiteSpaceStringLength; i++)
     {
-        return false;
+        int digit = removedWhiteSpaceString[i] - '0'; // Example: '5' - '0' => 53 - 48 = 5
+        *integer = *integer * 10 + digit; // Explain: 123: 0 * 10 + 1 => 1 * 10 + 2 => 12 * 10 + 3 = 123
     }
-    *integer = atoi(integer_buffer);
-    if(*integer == 0) 
-    {   
-        return false;
+
+    // Return negative number if the string is negative
+    if (isNegative)
+    {
+        *integer = -(*integer);
     }
+
     return true;
 }
+
 //function to check if integer is negative or not
 bool isValidOrderID(int orderID)
 {
