@@ -1,2 +1,2 @@
-1 || Banana || 3000000
-2 || TMT || 5000000
+1|Banana Slash|3000000
+2|Kamen Rider Watermelon|5000000

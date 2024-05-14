@@ -8,29 +8,57 @@
 #include "menufunction.h"
 
 void printMenu(Menu menu);
+void header();
 int orderDish(Menu menu, OrderItem *orderItem);
 void makeOrder(Order *order);
 void orderAgain(Order *order);
 void createOrderID(Order *order);
 
-
-void printMenu(Menu menu)
+void header()
 {
-    printf("\nWelcome to Teddy Restaurant!\n");
-    printf("\n%17s  %17s  %14s\n", "PIN", "Dishes", "Price");
+    for (int i = 0; i < 25; i++)
+    {
+        printf(" ");
+    }
+    //print header in pink color using ansii code
+    printf("\033[0;35m");
+    printf("WELCOME TO TEDDY RESTAURANT\n");
+    //reset to normal color
+    printf("\033[0m");
+    printf("\n");
+    for(int i = 0; i < 13; i++)
+    {
+        printf(" ");
+    }
+    printf("Ma mon an");
     for (int i = 0; i < 10; i++)
     {
         printf(" ");
     }
-    for (int i = 0; i < 50; i++)
+    printf("Ten mon an");
+    for(int i = 0; i < 15; i++)
+    {
+        printf(" ");
+    }
+    printf("Gia tien");
+    printf("\n");
+    for (int i = 0; i < 10; i++)
+    {
+        printf(" ");
+    }
+    for (int i = 0; i < 60; i++)
     {
         printf("_");
     }
     printf("\n");
-
+}
+void printMenu(Menu menu)
+{
+    header();
     for (int i = 0; i < menu.total; i++)
     {
-        printf("%17d  %17s  %14d \n", menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].price);
+        printf("\t\t%d    \t\t%-22s    %-15d",menu.dishes[i].PIN,menu.dishes[i].name,menu.dishes[i].price);
+        printf("\n");
     }
     printf("\n");
 }
@@ -38,7 +66,6 @@ void printMenu(Menu menu)
 int orderDish(Menu menu, OrderItem *orderItem)
 {
     inputPositiveInt("Vui long chon PIN mon an", &orderItem->dish.PIN);
-
     while (true)
     {
         if (orderItem->dish.PIN == 0)
@@ -56,8 +83,13 @@ int orderDish(Menu menu, OrderItem *orderItem)
                 printf("Ban da chon mon %s voi so luong %d va gia %d\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.price);
                 return 0;
             }
+            // no PIN matches the input
+            if (i == menu.total - 1)
+            {
+                printf("Khong tim thay mon an tuong ung voi ma PIN %d\n", orderItem->dish.PIN);
+                inputPositiveInt("Vui long chon lai PIN mon an", &orderItem->dish.PIN);
+            }
         }
-        printf("Mon an voi ma PIN %d khong duoc tim thay vui long nhap lai: ", orderItem->dish.PIN);
     }
 }
 
@@ -93,7 +125,6 @@ void makeOrder(Order *order)
         }
         else
             Contflag = 0;
-
         if (ynQuestion("Ban co muon dat mon an khac khong?") == 0)
         {
             if (order->total > MAX_ORDER_ITEMS)

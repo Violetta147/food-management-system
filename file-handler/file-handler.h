@@ -40,7 +40,7 @@ void writeMenu(const char* fileName, Menu menu)
     }
     for(int i = 0; i < menu.total; i++)
     {
-        fprintf(menuP, "%d || %s || %d\n",
+        fprintf(menuP, "%d|%s|%d\n",
                  menu.dishes[i].PIN,
                  menu.dishes[i].name,
                  menu.dishes[i].price);
@@ -62,7 +62,7 @@ Menu readMenu(const char* fileName)
     Menu menu;
     menu.total = 0;
     while(true) {
-        int check = fscanf(menuP, "%d || %s || %d\n", 
+        int check = fscanf(menuP, "%d|%[^|]|%d\n", 
                             &menu.dishes[menu.total].PIN,
                              menu.dishes[menu.total].name,
                               &menu.dishes[menu.total].price);

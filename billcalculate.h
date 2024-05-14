@@ -20,7 +20,7 @@ int payment(int total)
     {
         if (paid >= owe)
         {
-            change = floor(paid - owe);
+            change = paid - owe;
             printf("Tien thoi cua quy khach la: %d\n", change);
             break;
         }
@@ -52,12 +52,7 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
         *total = floor(*sum - *sale); // thanh tien = tong tien - khuyen mai
     }
     // generate order ID(doesn't need because created in makeOrder) and date here
-    char *date = (char *)malloc(11 * sizeof(char));
-    if (date == NULL)
-    {
-        printf("Memory allocation failed.\n");
-        exit(1);
-    }
+    char date[11];
     strcpy(date, createDate());
     // assign date to order
     strcpy(order->date, date);
@@ -85,30 +80,31 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
                 exit(-1);
             }
             for (int j = 0; j < numOrder; j++)
-            {   
+            {
 
                 TempOrders[j + totalOrders] = readOrder(orderP);
             }
             fclose(orderP);
             totalOrders += numOrder;
         }
-        for(int i = totalOrders; i < 100; i++)
+        for (int i = totalOrders; i < 100; i++)
         {
             TempOrders[i].orderID = 0;
         }
-    do // loop until order ID is unique
-    {
-        createOrderID(order);
-    }while(isRepeatOrderID(TempOrders, order->orderID) == true || isValidOrderID(order->orderID) == false);
+        do // loop until order ID is unique
+        {
+            createOrderID(order);
+        } while (isRepeatOrderID(TempOrders, order->orderID) == true || isValidOrderID(order->orderID) == false);
     }
     else
     {
         createOrderID(order);
     }
 
-    printf("__________________________________________________________________________________________  \n");
-    printf("\nMa hoa don: %03d\n", order->orderID);
+    printf("__________________________________________________________________________________________\n");
+    printf("Ma hoa don: %03d\n", order->orderID);
     printf("%17s %17s %17s %17s %17s\n", "Ma so", "Mon an", "Don gia", "So luong", "Thanh tien");
+    printf("__________________________________________________________________________________________\n");
 
     for (int i = 0; i < order->total; i++)
     {
@@ -118,6 +114,7 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
                order->items[i].dish.price,
                order->items[i].quantity,
                order->items[i].dish.price * order->items[i].quantity);
+        printf("__________________________________________________________________________________________\n");
     }
 
     printf("\033[0;33m");
@@ -156,13 +153,11 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
             break;
         }
     }
-
-    free(date);
 }
 
 // Function to print unpaid bills and ask user to pay
 bool UnpaidBill()
-{   
+{
     int i;
     int j;
     char *tmpDate = (char *)malloc(11 * sizeof(char));
@@ -177,67 +172,67 @@ bool UnpaidBill()
     char listOrderFiles[MAX][MAX];
     int numOrder = 0;
     int OrderIndex = 0;
-    int OweNeedToPay[100]; //tam thoi de 100, sau nay se thay doi
+    int OweNeedToPay[100]; // tam thoi de 100, sau nay se thay doi
     int flag = 0;
     getListOrders(listOrderFiles, &orderFilesTotal);
-    for(OrderIndex = 0; OrderIndex < orderFilesTotal; OrderIndex++)
+    for (OrderIndex = 0; OrderIndex < orderFilesTotal; OrderIndex++)
     {
-        if(strcmp(listOrderFiles[OrderIndex],tmpDate) == 0)
-        {   
+        if (strcmp(listOrderFiles[OrderIndex], tmpDate) == 0)
+        {
             flag = 1;
             break;
         }
     }
-    if(flag == 0)
+    if (flag == 0)
     {
-        printf("Khong ton tai ngay %.*s.\n", strlen(tmpDate)-4, tmpDate);
+        printf("Khong ton tai ngay %.*s.\n", strlen(tmpDate) - 4, tmpDate);
         return false;
     }
     Order TempOrders[100];
     int totalOrders = 0;
-        numOrder = countOrders(listOrderFiles[OrderIndex]);
-        char filePath[MAX_PATH_LENGTH];
-        strcpy(filePath, BASE_DATA_PATH);
-        strcat(filePath, INVOICES_PATH);
-        strcat(filePath, listOrderFiles[OrderIndex]);
-        printf("Reading file %s\n", filePath);
-        FILE *orderP = fopen(filePath, "r");
-        if (orderP == NULL)
+    numOrder = countOrders(listOrderFiles[OrderIndex]);
+    char filePath[MAX_PATH_LENGTH];
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, INVOICES_PATH);
+    strcat(filePath, listOrderFiles[OrderIndex]);
+    printf("Reading file %s\n", filePath);
+    FILE *orderP = fopen(filePath, "r");
+    if (orderP == NULL)
+    {
+        printf("Unable to read file\n.");
+        exit(-1);
+    }
+    for (int j = 0; j < numOrder; j++)
+    {
+        TempOrders[j + totalOrders] = readOrder(orderP);
+    }
+    fclose(orderP);
+    totalOrders += numOrder; // de nhu v cung dc
+    int length_to_keep = strlen(tmpDate) - 4;
+    tmpDate[length_to_keep] = '\0';
+    int isExistUnpaidOrder = 0; // chi can at least 1 order chua thanh toan
+    for (i = 0; i < totalOrders; i++)
+    {
+        if (strcmp(TempOrders[i].status, ORDER_PROCESSING) == 0)
         {
-            printf("Unable to read file\n.");
-            exit(-1);
+            isExistUnpaidOrder = 1;
         }
-        for (int j = 0; j < numOrder; j++)
-        {
-            TempOrders[j + totalOrders] = readOrder(orderP);
-        }
-        fclose(orderP);
-        totalOrders += numOrder; //de nhu v cung dc
-        int length_to_keep = strlen(tmpDate) - 4;
-        tmpDate[length_to_keep] = '\0';
-        int isExistUnpaidOrder = 0; //chi can at least 1 order chua thanh toan
-        for(i = 0; i < totalOrders; i++)
-        {
-            if(strcmp(TempOrders[i].status, ORDER_PROCESSING) == 0)
-            {
-                isExistUnpaidOrder = 1;
-            }
-        }
-        if(isExistUnpaidOrder == 0)
-        {
-            printf("Khong co don hang nao chua thanh toan trong ngay %s.\n", tmpDate);
-            return false;
-        }
-            printf("Danh sach don hang chua thanh toan trong ngay %s: \n", tmpDate);
-            printf("%17s %17s %17s %17s %17s\n", "Ma so", "Mon an", "Don gia", "So luong", "Thanh tien");
-    //access one order
+    }
+    if (isExistUnpaidOrder == 0)
+    {
+        printf("Khong co don hang nao chua thanh toan trong ngay %s.\n", tmpDate);
+        return false;
+    }
+    printf("Danh sach don hang chua thanh toan trong ngay %s: \n", tmpDate);
+    printf("%17s %17s %17s %17s %17s\n", "Ma so", "Mon an", "Don gia", "So luong", "Thanh tien");
+    // access one order
     for (i = 0; i < totalOrders; i++)
     {
         if (strcasecmp(TempOrders[i].status, ORDER_PROCESSING) == 0)
         {
             printf("__________________________________________________________________________________________  \n");
             printf("\nMa hoa don: %03d\n", TempOrders[i].orderID);
-            //access one order's items
+            // access one order's items
             for (j = 0; j < TempOrders[i].total; j++)
             {
                 printf("%17d %17s %17d %17d %17d\n",
@@ -248,16 +243,16 @@ bool UnpaidBill()
                        TempOrders[i].items[j].dish.price * TempOrders[i].items[j].quantity);
                 OweNeedToPay[i] += TempOrders[i].items[j].dish.price * TempOrders[i].items[j].quantity;
             }
-                printf("\033[0;33m");
-                printf("%51s%38d\n", "Tong:", OweNeedToPay[i]);
-                if(OweNeedToPay[i] >= SALE)
-                {
-                    printf("%57s%32d\n", "Khuyen mai:", OweNeedToPay[i] * 25 / 100);
-                    printf("%57s%32d\n", "Thanh tien:", OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
-                }
-                else
+            printf("\033[0;33m");
+            printf("%51s%38d\n", "Tong:", OweNeedToPay[i]);
+            if (OweNeedToPay[i] >= SALE)
+            {
+                printf("%57s%32d\n", "Khuyen mai:", OweNeedToPay[i] * 25 / 100);
+                printf("%57s%32d\n", "Thanh tien:", OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
+            }
+            else
                 printf("%57s%32d\n", "Thanh tien:", OweNeedToPay[i]);
-                printf("\033[m");
+            printf("\033[m");
         }
     }
     while (true)
@@ -276,15 +271,15 @@ bool UnpaidBill()
                 printf("Khong tim thay don hang.\n");
             }
             else
-            {   
-                for(i = 0; i < totalOrders; i++)
+            {
+                for (i = 0; i < totalOrders; i++)
                 {
-                    if(TempOrders[i].orderID == orderIndex)
+                    if (TempOrders[i].orderID == orderIndex)
                     {
                         break;
                     }
                 }
-                if(OweNeedToPay[i] >= SALE)
+                if (OweNeedToPay[i] >= SALE)
                 {
                     payment(OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
                 }

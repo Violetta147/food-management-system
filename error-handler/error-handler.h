@@ -21,6 +21,7 @@ bool isSameName(Menu menu, char* name);
 bool isNoDif(Dish dishes[], int i);
 bool isYes(char* c);
 bool isNo(char* c);
+char myToLower(char c);
 void arg();
 bool isRepeatOrderID(Order orders[100], int orderID);
 bool isNotExistOrderID(Order orders[100], int orderID);
@@ -91,10 +92,10 @@ bool isRepeatPIN(Menu menu, int PIN)
     {
         if(menu.dishes[i].PIN == PIN)
         {
-            return true;
+            return true; // if PIN is repeated
         }
     }
-    return false;
+    return false; // if PIN is unique
 }
 // check if new PINS in "adding multiple dishes" are unique
 bool isSamePIN(Dish dishes[], int i)
@@ -129,7 +130,7 @@ bool isYes(char* c)
 {
     for(int i = 0; c[i] != '\0'; i++)
     {
-        c[i] =tolower(c[i]);
+        c[i] = myToLower(c[i]);
     }
     return (strcmp(c, "yes") == 0 || strcmp(c, "y") == 0);
 }
@@ -138,9 +139,17 @@ bool isNo(char* c)
 {
     for(int i = 0; c[i] != '\0'; i++)
     {
-        c[i] =tolower(c[i]);
+        c[i] =myToLower(c[i]);
     }
     return (strcmp(c, "no") == 0 || strcmp(c, "n") == 0);
+}
+char myToLower(char c)
+{
+    if(c >= 'A' && c <= 'Z')
+    {
+        return c - ('A' - 'a');
+    }
+    return c;
 }
 // ask user to confirm save changes
 void arg()
@@ -258,7 +267,6 @@ bool parseInt(char *string, int *integer)
     {
         *integer = -(*integer);
     }
-
     return true;
 }
 

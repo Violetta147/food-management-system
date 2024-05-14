@@ -17,6 +17,10 @@ int main()
     // printf("Is valid: %d\n", isValid);
     // printf("Number: %d\n", number);
 
+    //generate test for inputPositiveInt
+    // int number;
+    // inputPositiveInt("Enter a positive number: ", &number);
+    // printf("Number: %d\n", number);
     Order order;
     bool isLoop = true;
     int revenue = 0;
