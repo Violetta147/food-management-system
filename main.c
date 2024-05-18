@@ -10,68 +10,43 @@
 #include "admin.h"
 
 int main()
-{    
-    // char string[100] = "\t - 123";
-    // int number;
-    // bool isValid = parseInt(string, &number);
-    // printf("Is valid: %d\n", isValid);
-    // printf("Number: %d\n", number);
-
-    //generate test for inputPositiveInt
-    // int number;
-    // inputPositiveInt("Enter a positive number: ", &number);
-    // printf("Number: %d\n", number);
-    Order order;
-    bool isLoop = true;
-    int revenue = 0;
-    while(isLoop)
+{
+    while (true)
     {
-        int sum;
-        int sale;
-        int total;
-        makeOrder(&order);
-        int iszero;
-        for(int i = 0; i < 10; i++)
+        printf("Nhap X de thoat khoi chuong trinh.\n");
+        enter();
+        if (myToUpper(mode) == 'A')
         {
-            if(order.items[i].dish.PIN == 0)
+            printf("De vao che do Admin vui long nhap mat khau.\n");
+            conf();
+            menu = readMenu("menu.txt");
+            printMenu(menu);
+            do
             {
-                iszero = i;
-                break;
-            }
+                Ans();
+                if (myToUpper(action) == 'D')
+                {
+                    Erase();
+                }
+                if (myToUpper(action) == 'A')
+                {
+                    appendMenu();
+                }
+                if (myToUpper(action) == 'C')
+                {
+                    custom(menu);
+                }
+                if (myToUpper(action) == 'S')
+                {   
+                    int revenue = 0;
+                    calculate_popularity_revenue(&revenue);
+                }
+            } while (true);
         }
-        if(order.items[iszero].dish.PIN == 0)
+        else if (myToUpper(mode) == 'C') // customer mode
         {
-            isLoop = ynQuestion("Ban co muon tiep tuc khong?");
+            Customer();
+            return 0;
         }
-        for(int i = 0; i < 10; i++)
-        {
-            if(order.items[i].dish.PIN != 0)
-            {
-                calculateBill(&order, &sum, &sale, &total);
-                printf("Tong tien: %d\n", sum);
-                printf("Khuyen mai: %d\n", sale);
-                printf("Thanh tien: %d\n", total);
-                break;
-                
-            }
-        }   
-            isLoop = ynQuestion("Ban co muon tiep tuc khong?");
     }
-
-    isLoop = true;
-    calculate_popularity_revenue(&revenue);
-    while(isLoop)
-    {
-       bool ContinuePaying = UnpaidBill();
-       if(ContinuePaying)
-       {
-           printf("Tiep tuc thanh toan\n");
-       }
-       else
-       {
-           printf("Cam on quy khach da su dung dich vu cua chung toi\n");
-       }
-       isLoop = ynQuestion("Ban co muon tiep tuc khong?");
-    }
-    return 0;
 }

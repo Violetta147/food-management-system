@@ -17,7 +17,7 @@ printf("Vui long doi ");
     // //begin program
     // //prompt and validate the mode selection (A/C)
     // enter();
-    // if (toupper(mode) == 'A')
+    // if (myToUpper(mode) == 'A')
     // {
     //     //confirm password and validation for accessing admin mode
     //     printf("De vao che do Admin, vui long nhap mat khau: ");

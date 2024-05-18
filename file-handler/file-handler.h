@@ -14,7 +14,7 @@
 #define IS_TIME_TO_WRITE_BACK 1
 
 //function prototypes
-void writeMenu(const char* fileName, Menu menu);
+void writeMenu(const char* fileName, Menu menu, bool isAppend);
 Menu readMenu(const char* fileName);
 void writeOrder(const char* filePath, Order *order, bool isAppend);
 void resetOrders(const char* filePath);
@@ -26,27 +26,47 @@ char* createDate();
 int countOrders(const char* fileName);
 
 
-void writeMenu(const char* fileName, Menu menu)
+void writeMenu(const char* fileName, Menu menu, bool isAppend)
 {
     char filePath[MAX_PATH_LENGTH];
     strcpy(filePath, BASE_DATA_PATH);
     strcat(filePath, fileName);
- 
-    FILE* menuP = fopen(filePath, "a");
-    if (menuP == NULL) 
-    {
-        printf("Unable to open file.\n");
+    if(isAppend == true)
+    {   
+        FILE* menuP = fopen(filePath, "a");
+        if (menuP == NULL) 
+        {
+            printf("Unable to open file.\n");
+            return;
+        }
+        for(int i = 0; i < menu.total; i++)
+        {
+            fprintf(menuP, "%d|%s|%d\n",
+                     menu.dishes[i].PIN,
+                     menu.dishes[i].name,
+                     menu.dishes[i].price);
+        }
+        fclose(menuP);
         return;
     }
-    for(int i = 0; i < menu.total; i++)
+    else if(isAppend == false)
     {
-        fprintf(menuP, "%d|%s|%d\n",
-                 menu.dishes[i].PIN,
-                 menu.dishes[i].name,
-                 menu.dishes[i].price);
+        FILE* menuP = fopen(filePath, "w");
+        if (menuP == NULL) 
+        {
+            printf("Unable to open file.\n");
+            return;
+        }
+        for(int i = 0; i < menu.total; i++)
+        {
+            fprintf(menuP, "%d|%s|%d\n",
+                     menu.dishes[i].PIN,
+                     menu.dishes[i].name,
+                     menu.dishes[i].price);
+        }
+        fclose(menuP);
+        return;
     }
-
-    fclose(menuP);
 }
 Menu readMenu(const char* fileName)
 {

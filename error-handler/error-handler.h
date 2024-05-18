@@ -151,6 +151,14 @@ char myToLower(char c)
     }
     return c;
 }
+char myToUpper(char c)
+{   
+    if(c >= 'a' && c <= 'z')
+    {
+        return c + ('A' - 'a');
+    }
+    return c;
+}
 // ask user to confirm save changes
 void arg()
 {   
@@ -160,7 +168,7 @@ void arg()
         scanf("%c", &ans);
         clstd();
     } 
-    while(toupper(ans) != 'N' && toupper(ans) != 'Y' && toupper(ans) != 'X');
+    while(myToUpper(ans) != 'N' && myToUpper(ans) != 'Y' && myToUpper(ans) != 'X');
 }
 /*----------------------------------------------------------------------------*/
 /*                                 ORDER ID                                   */
@@ -192,8 +200,7 @@ bool isNotExistOrderID(Order orders[100], int orderID)
 //function to check if orderID is valid
 bool parseInt(char *string, int *integer)
 {   
-    int stringlength = strlen(string);
-    
+    int stringlength = strlen(string);    
     // Remove leading white spaces
     int startSliceIndex = 0;
     for (int i = 0; i < stringlength; i++)
@@ -241,7 +248,7 @@ bool parseInt(char *string, int *integer)
 
     // Check if the string is empty
     if (removedWhiteSpaceStringLength == 0)
-    {
+    {   
         return false;
     }
     
@@ -249,7 +256,7 @@ bool parseInt(char *string, int *integer)
     for (int i = 0; i < removedWhiteSpaceStringLength; i++)
     {
         if (removedWhiteSpaceString[i] < '0' || removedWhiteSpaceString[i] > '9')
-        {
+        {   
             return false;
         }
     }

@@ -42,7 +42,11 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
     *total = 0;
 
     for (int i = 0; i < order->total; i++)
-    {
+    {   
+        if(order->items[i].dish.PIN == 0)
+        {
+            break;
+        }
         *sum += order->items[i].dish.price * order->items[i].quantity;
     }
 
@@ -107,7 +111,11 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
     printf("__________________________________________________________________________________________\n");
 
     for (int i = 0; i < order->total; i++)
-    {
+    {   
+        if(order->items[i].dish.PIN == 0)
+        {
+            break;
+        }
         printf("%17d %17s %17d %17d %17d\n",
                order->items[i].dish.PIN,
                order->items[i].dish.name,
@@ -125,7 +133,7 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
     while (true)
     {
         printf("\033[1;34m");
-        printf("Ban co muon thanh toan ngay khong? [Y/N]:");
+        printf("Ban co muon thanh toan ngay khong, neu ban muon huy dat mon ? [Y/N]:");
         printf("\033[m");
         char tmp[1000];
         scanf("%s", tmp);
@@ -234,7 +242,11 @@ bool UnpaidBill()
             printf("\nMa hoa don: %03d\n", TempOrders[i].orderID);
             // access one order's items
             for (j = 0; j < TempOrders[i].total; j++)
-            {
+            {   
+                if(TempOrders[i].items[j].dish.PIN == 0)
+                {
+                    break;
+                }
                 printf("%17d %17s %17d %17d %17d\n",
                        TempOrders[i].items[j].dish.PIN,
                        TempOrders[i].items[j].dish.name,
@@ -259,12 +271,14 @@ bool UnpaidBill()
     {
         if (ynQuestion("Ban co muon thanh toan don hang nao khong?"))
         {
-            printf("Vui long nhap ma hoa don can thanh toan: ");
+            printf("Vui long nhap ma hoa don can thanh toan!\n");
             int orderIndex;
-            while (scanf("%d", &orderIndex) != 1 || isNotExistOrderID(TempOrders, orderIndex))
+            inputInt("Ma hoa don: ", &orderIndex);
+            while (isNotExistOrderID(TempOrders, orderIndex))
             {
                 clstd();
-                printf("\nVui long nhap dung ma hoa don: ");
+                printf("\nVui long nhap dung dinh dang\n!");
+                inputInt("Ma hoa don: ", &orderIndex);
             }
             if (orderIndex <= 0) // i made changes here to numOrder -> countOrder
             {

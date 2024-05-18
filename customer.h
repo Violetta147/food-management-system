@@ -13,6 +13,11 @@ int orderDish(Menu menu, OrderItem *orderItem);
 void makeOrder(Order *order);
 void orderAgain(Order *order);
 void createOrderID(Order *order);
+void resetOrder(Order *order);
+void Customer();
+void calculateBill(Order *order, int *sum, int *sale, int *total);
+bool UnpaidBill();
+
 
 void header()
 {
@@ -20,13 +25,13 @@ void header()
     {
         printf(" ");
     }
-    //print header in pink color using ansii code
+    // print header in pink color using ansii code
     printf("\033[0;35m");
     printf("WELCOME TO TEDDY RESTAURANT\n");
-    //reset to normal color
+    // reset to normal color
     printf("\033[0m");
     printf("\n");
-    for(int i = 0; i < 13; i++)
+    for (int i = 0; i < 13; i++)
     {
         printf(" ");
     }
@@ -36,7 +41,7 @@ void header()
         printf(" ");
     }
     printf("Ten mon an");
-    for(int i = 0; i < 15; i++)
+    for (int i = 0; i < 15; i++)
     {
         printf(" ");
     }
@@ -57,7 +62,7 @@ void printMenu(Menu menu)
     header();
     for (int i = 0; i < menu.total; i++)
     {
-        printf("\t\t%d    \t\t%-22s    %-15d",menu.dishes[i].PIN,menu.dishes[i].name,menu.dishes[i].price);
+        printf("\t\t%d    \t\t%-22s    %-15d", menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].price);
         printf("\n");
     }
     printf("\n");
@@ -169,4 +174,73 @@ void createOrderID(Order *order)
             printf("Vui long nhap dung Order ID.\n");
         }
     } while (!parsedCorrect);
+}
+// function to reset the order
+void resetOrder(Order *order)
+{
+    order->total = 0;
+    order->orderID = 0;
+    strcpy(order->status, ORDER_PROCESSING);
+}
+// function to prompt customers to choose these options
+// 1. Make Order & Payment
+// 2. Pay unpaid bill
+void Customer()
+{
+    Order order;
+    int sum;
+    int sale;
+    int total;
+    int revenue;
+    bool isLoop = true;
+
+    while (isLoop)
+    {
+        int choice;
+        printf("1. Dat mon va thanh toan.\n");
+        printf("2.Tra hoa don chua thanh toan.\n");
+        printf("3. Thoat.\n");
+
+        inputPositiveInt("Vui long chon chuc nang", &choice);
+        if (choice == 1)
+        {
+            makeOrder(&order);
+            if (order.items[0].dish.PIN == 0)
+            {
+                printf("Ban da huy viec dat mon an.\n");
+                break;
+            }
+            else if (order.items[0].dish.PIN != 0)
+            {
+                for (int i = 0; i < order.total; i++)
+                {
+                    if (order.items[i].dish.PIN == 0)
+                    {
+                        break;
+                    }
+                }
+                calculateBill(&order, &sum, &sale, &total);
+                resetOrder(&order);
+            }
+            else
+            {
+                calculateBill(&order, &sum, &sale, &total);
+                resetOrder(&order);
+            }
+        }
+        else if (choice == 2)
+        {
+            bool ContinueToPay = true;
+            while (ContinueToPay)
+            {
+                UnpaidBill();
+                ContinueToPay = ynQuestion("Ban co muon tiep tuc tra hoa don chua thanh toan khong?");
+            }
+        }
+        else if (choice == 3)
+        {
+            isLoop = false;
+        }
+    }
+    return;
 }
