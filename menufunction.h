@@ -117,14 +117,8 @@ void appendMenu()
         menu.dishes[menu.total] = Temp;
         menu.total++;
     }
-    // delete the file data and write the new menu
-    FILE *menuP = fopen("menu.txt", "w");
-    if (menuP == NULL)
-    {
-        printf("Unable to open file.\n");
-        return;
-    }
-    fclose(menuP);
+    // delete the file data and write the new menu(is not necessary because "w" will overwrite the file)
+    //overwrite the file with the new menu
     printf("\033[2J\033[1;1H");
     writeMenu("menu.txt", menu, false);
     menu = readMenu("menu.txt");

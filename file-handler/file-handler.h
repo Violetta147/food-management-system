@@ -24,6 +24,7 @@ Order readOrder(FILE* orderP);
 char* createInvoiceFilePath(char* date);
 char* createDate();
 int countOrders(const char* fileName);
+void sortDateIndex();
 
 
 void writeMenu(const char* fileName, Menu menu, bool isAppend)
@@ -291,6 +292,57 @@ char* createDate()
     }
     clstd();
     return date;
+}
+//function to sort date index then write back into the index.txt file (hasn't analyzed yet)
+void sortDateIndex()
+{
+    char filePath[MAX_PATH_LENGTH];
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, INVOICES_PATH);
+    strcat(filePath, "index.txt");
+    FILE* indexFile = fopen(filePath, "r");
+    if (indexFile == NULL) {
+        printf("Unable to read file.");
+        exit(-1);
+    }
+    char listFiles[MAX][MAX];
+    int totalFileIndex = 0;
+    getListOrders(listFiles, &totalFileIndex);
+    //calculate the timestamp value of each date
+    int dateInts[MAX];
+    for(int i = 0; i < totalFileIndex; i++)
+    {
+        dateInts[i] = dateToInt(listFiles[i]);
+    }
+    //sort the list of file names
+    for(int i = 0; i < totalFileIndex; i++)
+    {
+        for(int j = i + 1; j < totalFileIndex; j++)
+        {
+            if(dateInts[i] > dateInts[j])
+            {
+                int tempInt = dateInts[i];
+                dateInts[i] = dateInts[j];
+                dateInts[j] = tempInt;
+                char tempStr[MAX];
+                strcpy(tempStr, listFiles[i]);
+                strcpy(listFiles[i], listFiles[j]);
+                strcpy(listFiles[j], tempStr);
+            }
+        }
+    }
+    //write back to the index.txt file
+    fclose(indexFile);
+    indexFile = fopen(filePath, "w");
+    if (indexFile == NULL) {
+        printf("Unable to open file.");
+        exit(-1);
+    }
+    for(int i = 0; i < totalFileIndex; i++)
+    {
+        fprintf(indexFile, "%s\n", listFiles[i]);
+    }
+    fclose(indexFile);
 }
 
 //continue read orders from file 

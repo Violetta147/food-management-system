@@ -10,7 +10,8 @@
 #include "admin.h"
 
 int main()
-{
+{   
+    sortDateIndex();
     while (true)
     {
         printf("Nhap X de thoat khoi chuong trinh.\n");

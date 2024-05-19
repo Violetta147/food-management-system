@@ -55,6 +55,10 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
         *sale = *sum * 25 / 100;      // 25% discount
         *total = floor(*sum - *sale); // thanh tien = tong tien - khuyen mai
     }
+    else
+    {
+        *total = *sum;
+    }
     // generate order ID(doesn't need because created in makeOrder) and date here
     char date[11];
     strcpy(date, createDate());
@@ -107,7 +111,7 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
 
     printf("__________________________________________________________________________________________\n");
     printf("Ma hoa don: %03d\n", order->orderID);
-    printf("%17s %17s %17s %17s %17s\n", "Ma so", "Mon an", "Don gia", "So luong", "Thanh tien");
+    printf("%17s %17s %17s %17s %17s\n", " ", " ", "Don gia", "So luong", "Thanh tien");
     printf("__________________________________________________________________________________________\n");
 
     for (int i = 0; i < order->total; i++)
@@ -116,24 +120,20 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
         {
             break;
         }
-        printf("%17d %17s %17d %17d %17d\n",
-               order->items[i].dish.PIN,
-               order->items[i].dish.name,
-               order->items[i].dish.price,
-               order->items[i].quantity,
-               order->items[i].dish.price * order->items[i].quantity);
+        printf("%17d %17s\n", order->items[i].dish.PIN, order->items[i].dish.name);
+        printf("%52d %17d %17d\n", order->items[i].dish.price, order->items[i].quantity, order->items[i].dish.price * order->items[i].quantity);
         printf("__________________________________________________________________________________________\n");
     }
 
     printf("\033[0;33m");
-    printf("%51s%38d\n", "Tong:", *sum);
-    printf("%57s%32d\n", "Khuyen mai:", *sale);
-    printf("%57s%32d\n", "Thanh tien:", *total);
+    printf("%51s%37d\n", "Tong:", *sum);
+    printf("%57s%31d\n", "Khuyen mai:", *sale);
+    printf("%57s%31d\n", "Thanh tien:", *total);
     printf("\033[m");
     while (true)
     {
         printf("\033[1;34m");
-        printf("Ban co muon thanh toan ngay khong, neu ban muon huy dat mon ? [Y/N]:");
+        printf("Ban co muon thanh toan ngay khong? [Y/N]:");
         printf("\033[m");
         char tmp[1000];
         scanf("%s", tmp);
