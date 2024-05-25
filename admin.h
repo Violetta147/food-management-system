@@ -18,7 +18,7 @@ void enter()
 {
     for (int k = 0; k < 5; k++)
     {
-        printf("Vui long nhap (A/C) de vao che do Admin/Customer: ");
+        printf("Enter (A/C) to get in admin or customer mode: ");
         scanf("%c", &mode); // no error checking
         clstd();
         if (myToUpper(mode) == 'A' || myToUpper(mode) == 'C')
@@ -52,8 +52,37 @@ void conf()
         if (strcmp(pass, PASS) == 0)
         {
             system("color 02");
-            printf("ACCESS GRANTED\n");
+            printf("\n");
+            for(int i = 0; i < 20; i++)
+            {
+                printf(" ");
+            }
+            printf("    #     #####  #####  #####  ##### #####      #####  #####     #     #    # ##### ##### ####\n");
+            for(int i = 0; i < 20; i++)
+            {
+                printf(" ");
+            }
+            printf("   # #    #      #      #      #     #          #      #   #    # #    ##   #   #   #     #   #\n");
+            for(int i = 0; i < 20; i++)
+            {
+                printf(" ");
+            }
+            printf("  #####   #      #      #####  ##### #####      #  ##  ####    #####   # #  #   #   ##### #    #\n");
+            for(int i = 0; i < 20; i++)
+            {
+                printf(" ");
+            }
+            printf(" #     #  #      #      #          #     #      #   #  # #    #     #  #  # #   #   #     #   #\n");
+            for(int i = 0; i < 20; i++)
+            {
+                printf(" ");
+            }
+            printf("#       # #####  #####  #####  ##### #####      #####  #  ## #       # #    #   #   ##### ####\n");
+            printf("\n");
+            printf("\n");
             yawm();
+            // RESET COLOR TO NORMAL
+            system("color 07");
             break;
         }
         else
@@ -173,7 +202,7 @@ void calculate_popularity_revenue(int *revenue)
     {
         pop[i].Dish.PIN = 0;
         pop[i].count = 0;
-        pop[i].Dish.price = 0;
+        pop[i].Dish.Price = 0;
         pop[i].Dish.name[0] = '\0';
     }
     menu = readMenu("menu.txt");
@@ -189,7 +218,7 @@ void calculate_popularity_revenue(int *revenue)
                 {
                     pop[i].Dish = menu.dishes[i];
                     pop[i].count += TempOrder[j].items[k].quantity;
-                    pop[i].Dish.price = menu.dishes[i].price;
+                    pop[i].Dish.Price = menu.dishes[i].Price;
                 }
             }
         }
@@ -242,7 +271,7 @@ void calculate_popularity_revenue(int *revenue)
             continue;
         for (int j = 0; j < TempOrder[i].total; j++)
         {
-            sum[i] += TempOrder[i].items[j].quantity * TempOrder[i].items[j].dish.price;
+            sum[i] += TempOrder[i].items[j].quantity * TempOrder[i].items[j].dish.Price;
         }
         if (sum[i] >= SALE)
         {

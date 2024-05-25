@@ -14,14 +14,14 @@ int main()
     sortDateIndex();
     while (true)
     {
-        printf("Nhap X de thoat khoi chuong trinh.\n");
+        printf("Enter 'X' to exit program.\n");
         enter();
         if (myToUpper(mode) == 'A')
         {
-            printf("De vao che do Admin vui long nhap mat khau.\n");
+            printf("To enter ADMIN mode please input PASSWORD.\n");
             conf();
             menu = readMenu("menu.txt");
-            printMenu(menu);
+            printMenu();
             do
             {
                 Ans();

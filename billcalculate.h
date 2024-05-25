@@ -15,19 +15,19 @@ int payment(int total)
     int owe = total; // tien quy khach no, owe is temp
     int paid = 0;    // tien quy khach tra
 
-    inputPositiveInt("Vui long nhap so tien quy khach can tra", &paid);
+    inputPositiveInt("PLEASE ENTER THE AMOUNT OF MONEY YOU NEED TO PAY IN VND", &paid);
     do
     {
         if (paid >= owe)
         {
             change = paid - owe;
-            printf("Tien thoi cua quy khach la: %d\n", change);
+            printf("YOUR CHANGE IS : %d VND\n", change);
             break;
         }
         else
         {
             owe -= paid;
-            printf("Quy khach tra tien con thieu, vui long tra them %d: ", owe);
+            printf("YOU STILL OWE US %d VND: ", owe);
         }
     } while (owe > 0);
 
@@ -36,18 +36,17 @@ int payment(int total)
 
 void calculateBill(Order *order, int *sum, int *sale, int *total)
 {
-    printf("Tinh tien hoa don: \n");
     *sum = 0;
     *sale = 0;
     *total = 0;
 
     for (int i = 0; i < order->total; i++)
-    {   
-        if(order->items[i].dish.PIN == 0)
+    {
+        if (order->items[i].dish.PIN == 0)
         {
             break;
         }
-        *sum += order->items[i].dish.price * order->items[i].quantity;
+        *sum += order->items[i].dish.Price * order->items[i].quantity;
     }
 
     if (*sum >= SALE)
@@ -110,30 +109,30 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
     }
 
     printf("__________________________________________________________________________________________\n");
-    printf("Ma hoa don: %03d\n", order->orderID);
-    printf("%17s %17s %17s %17s %17s\n", " ", " ", "Don gia", "So luong", "Thanh tien");
+    printf("ORDER ID: %03d\n", order->orderID);
+    printf("%18s %19s %19s %18s %15s %15s\n", "PIN", "Name", "Price", "Quantity", "Unit", "Total");
     printf("__________________________________________________________________________________________\n");
 
     for (int i = 0; i < order->total; i++)
-    {   
-        if(order->items[i].dish.PIN == 0)
+    {
+        if (order->items[i].dish.PIN == 0)
         {
             break;
         }
-        printf("%17d %17s\n", order->items[i].dish.PIN, order->items[i].dish.name);
-        printf("%52d %17d %17d\n", order->items[i].dish.price, order->items[i].quantity, order->items[i].dish.price * order->items[i].quantity);
+        printf("%18d %21s\n", order->items[i].dish.PIN, order->items[i].dish.name);
+        printf("%19d %15d %18s %15d\n", order->items[i].dish.Price, order->items[i].quantity, order->items[i].dish.Unit, order->items[i].dish.Price * order->items[i].quantity);
         printf("__________________________________________________________________________________________\n");
     }
 
-    printf("\033[0;33m");
-    printf("%51s%37d\n", "Tong:", *sum);
-    printf("%57s%31d\n", "Khuyen mai:", *sale);
-    printf("%57s%31d\n", "Thanh tien:", *total);
+    printf("\033[1;33m");
+    printf("%94s%15d\n", "Total:", *sum);
+    printf("%94s%15d\n", "Sale:", *sale);
+    printf("%94s%15d\n", "Payment:", *total);
     printf("\033[m");
     while (true)
     {
         printf("\033[1;34m");
-        printf("Ban co muon thanh toan ngay khong? [Y/N]:");
+        printf("Do you want to pay instantly? [Y/N]:");
         printf("\033[m");
         char tmp[1000];
         scanf("%s", tmp);
@@ -141,19 +140,19 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
         if (isYes(tmp))
         {
             payment(*total);
-            printf("\nBan da thanh toan don hang ma so %d\n", order->orderID);
+            printf("\nOrder ID %d paid.\n", order->orderID);
             strcpy(order->status, ORDER_PAID);
             // how to assign order ID to order
             writeOrder(createInvoiceFilePath(date), order, true);
             strcat(date, ".txt");
             createOrderIndex(date);
-            printf("Cam on quy khach da su dung dich vu cua chung toi.\n");
+            printf("Thank you for using our service.\n");
             printf("^_^\n");
             break;
         }
         else
         {
-            printf("Don hang cua quy khach da duoc luu lai.\n");
+            printf("Your order has been saved for later paying.\n");
             strcpy(order->status, ORDER_PROCESSING);
             writeOrder(createInvoiceFilePath(date), order, true);
             strcat(date, ".txt");
@@ -193,7 +192,7 @@ bool UnpaidBill()
     }
     if (flag == 0)
     {
-        printf("Khong ton tai ngay %.*s.\n", strlen(tmpDate) - 4, tmpDate);
+        printf("Date %.*s doesn't exist.\n", strlen(tmpDate) - 4, tmpDate);
         return false;
     }
     Order TempOrders[100];
@@ -228,102 +227,95 @@ bool UnpaidBill()
     }
     if (isExistUnpaidOrder == 0)
     {
-        printf("Khong co don hang nao chua thanh toan trong ngay %s.\n", tmpDate);
+        printf("There is no unpaid order within the date %s.\n", tmpDate);
         return false;
     }
-    printf("Danh sach don hang chua thanh toan trong ngay %s: \n", tmpDate);
-    printf("%17s %17s %17s %17s %17s\n", "Ma so", "Mon an", "Don gia", "So luong", "Thanh tien");
+    // LIST OF UNPAID ORDERS
+    /*---------------------------------------------------------------------------------------------------*/
+    printf("List of unpaid orders within the date %s: \n", tmpDate);
+    printf("%18s %19s %19s %18s %15s %15s\n", "PIN", "Name", "Price", "Quantity", "Unit", "Total");
     // access one order
     for (i = 0; i < totalOrders; i++)
     {
         if (strcasecmp(TempOrders[i].status, ORDER_PROCESSING) == 0)
         {
             printf("__________________________________________________________________________________________  \n");
-            printf("\nMa hoa don: %03d\n", TempOrders[i].orderID);
+            printf("\nORDER ID: %03d\n", TempOrders[i].orderID);
             // access one order's items
             for (j = 0; j < TempOrders[i].total; j++)
-            {   
-                if(TempOrders[i].items[j].dish.PIN == 0)
+            {
+                if (TempOrders[i].items[j].dish.PIN == 0)
                 {
                     break;
                 }
-                printf("%17d %17s %17d %17d %17d\n",
-                       TempOrders[i].items[j].dish.PIN,
-                       TempOrders[i].items[j].dish.name,
-                       TempOrders[i].items[j].dish.price,
-                       TempOrders[i].items[j].quantity,
-                       TempOrders[i].items[j].dish.price * TempOrders[i].items[j].quantity);
-                OweNeedToPay[i] += TempOrders[i].items[j].dish.price * TempOrders[i].items[j].quantity;
+                printf("%18d %21s\n", TempOrders[i].items[j].dish.PIN, TempOrders[i].items[j].dish.name);
+                printf("%19d %15d %18s %15d\n", TempOrders[i].items[j].dish.Price, TempOrders[i].items[j].quantity, TempOrders[i].items[j].dish.Unit, TempOrders[i].items[j].dish.Price * TempOrders[i].items[j].quantity);
+                OweNeedToPay[i] += TempOrders[i].items[j].dish.Price * TempOrders[i].items[j].quantity;
             }
             printf("\033[0;33m");
-            printf("%51s%38d\n", "Tong:", OweNeedToPay[i]);
+            printf("%94s%15d\n", "Total:", OweNeedToPay[i]);
             if (OweNeedToPay[i] >= SALE)
             {
-                printf("%57s%32d\n", "Khuyen mai:", OweNeedToPay[i] * 25 / 100);
-                printf("%57s%32d\n", "Thanh tien:", OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
+                printf("%94s%15d\n", "Sale", OweNeedToPay[i] * 25 / 100);
+                printf("%94s%15d\n", "Payment:", OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
             }
             else
-                printf("%57s%32d\n", "Thanh tien:", OweNeedToPay[i]);
+                printf("%94s%15d\n", "Payment:", OweNeedToPay[i]);
             printf("\033[m");
         }
+        printf("\n");
     }
+    /*---------------------------------------------------------------------------------------------------*/
     while (true)
     {
-        if (ynQuestion("Ban co muon thanh toan don hang nao khong?"))
+        if (ynQuestion("Do you want to pay?"))
         {
-            printf("Vui long nhap ma hoa don can thanh toan!\n");
+            printf("Please enter ORDER ID you want to pay!\n");
             int orderIndex;
-            inputInt("Ma hoa don: ", &orderIndex);
+            inputPositiveInt("ORDER ID: ", &orderIndex);
             while (isNotExistOrderID(TempOrders, orderIndex))
             {
                 clstd();
-                printf("\nVui long nhap dung dinh dang\n!");
-                inputInt("Ma hoa don: ", &orderIndex);
+                inputPositiveInt("ORDER ID: ", &orderIndex);
             }
-            if (orderIndex <= 0) // i made changes here to numOrder -> countOrder
+            // FIND 'ORDER' IN 'TEMPORDERS' MATCHES ORDER INDEX AND TAKE i VALUE TO PAY
+            for (i = 0; i < totalOrders; i++)
             {
-                printf("Khong tim thay don hang.\n");
+                if (TempOrders[i].orderID == orderIndex)
+                {
+                    break;
+                }
+            }
+            if (OweNeedToPay[i] >= SALE)
+            {
+                payment(OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
             }
             else
             {
-                for (i = 0; i < totalOrders; i++)
-                {
-                    if (TempOrders[i].orderID == orderIndex)
-                    {
-                        break;
-                    }
-                }
-                if (OweNeedToPay[i] >= SALE)
-                {
-                    payment(OweNeedToPay[i] - OweNeedToPay[i] * 25 / 100);
-                }
-                else
-                {
-                    payment(OweNeedToPay[i]);
-                }
-                printf("\nBan da thanh toan don hang ma so %d\n", orderIndex);
-                // update status
-                for (i = 0; i < totalOrders; i++)
-                {
-                    if (TempOrders[i].orderID == orderIndex)
-                    {
-                        strcpy(TempOrders[i].status, ORDER_PAID);
-                        break;
-                    }
-                }
-                // reset file to empty
-                resetOrders(createInvoiceFilePath(tmpDate));
-                for (i = 0; i < totalOrders; i++)
-                {
-                    writeOrder(createInvoiceFilePath(tmpDate), &TempOrders[i], IS_TIME_TO_WRITE_BACK);
-                }
-                printf("Cam on quy khach da su dung dich vu cua chung toi.\n");
-                return true;
+                payment(OweNeedToPay[i]);
             }
+            printf("\nYOU HAVE PAID ORDER WITH ID %d\n", orderIndex);
+            // UPDATE STATUS
+            for (i = 0; i < totalOrders; i++)
+            {
+                if (TempOrders[i].orderID == orderIndex)
+                {
+                    strcpy(TempOrders[i].status, ORDER_PAID);
+                    break;
+                }
+            }
+            // RESET FILE TO WRITE BACK
+            resetOrders(createInvoiceFilePath(tmpDate));
+            for (i = 0; i < totalOrders; i++)
+            {
+                writeOrder(createInvoiceFilePath(tmpDate), &TempOrders[i], IS_TIME_TO_WRITE_BACK);
+            }
+            printf("THANK YOU FOR USING OUR SERVICE.\n");
+            return true;
         }
         else
         {
-            printf("Don hang cua quy khach da duoc luu lai.\n");
+            printf("YOUR INVOICES HAVE BEEN SAVED FOR LATER PAYING.\n");
             return false;
         }
     }

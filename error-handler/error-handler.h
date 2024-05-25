@@ -4,23 +4,23 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <stdbool.h> 
+#include <stdbool.h>
 #include "strings.h"
 #include "../structs/dish.h"
 #include "../file-handler/file-handler.h"
 #define BUFFER_SIZE 4096
 
-//function prototypes
+// function prototypes
 void clstd();
 void yawm();
 bool isExist(Menu menu, int PIN);
 bool isAlreadyPIN(int array[], int i);
 bool isRepeatPIN(Menu menu, int PIN);
 bool isSamePIN(Dish dishes[], int i);
-bool isSameName(Menu menu, char* name);
+bool isSameName(Menu menu, char *name);
 bool isNoDif(Dish dishes[], int i);
-bool isYes(char* c);
-bool isNo(char* c);
+bool isYes(char *c);
+bool isNo(char *c);
 char myToLower(char c);
 void arg();
 bool isRepeatOrderID(Order orders[100], int orderID);
@@ -28,32 +28,35 @@ bool isNotExistOrderID(Order orders[100], int orderID);
 bool isValidOrderID(int orderID);
 int getListOrders(char listFiles[MAX][MAX], int *total);
 bool parseInt(char *string, int *integer);
-char* orderIDConvert(int orderID);
-bool isEOF(FILE* file);
+char *orderIDConvert(int orderID);
+bool isEOF(FILE *file);
 bool isLeapYear(int year);
 bool isValidDate(int date);
-int dateToInt(char* date);
-int dayToInt(char* date);
-int monthToInt(char* date);
-int yearToInt(char* date);
+int dateToInt(char *date);
+int dayToInt(char *date);
+int monthToInt(char *date);
+int yearToInt(char *date);
 
 // clear input buffer
 void clstd()
-{   
+{
     int c;
-    while((c = getchar()) != '\n' && c != EOF);
+    while ((c = getchar()) != '\n' && c != EOF)
+        ;
     return;
 }
-// clear the terminal screen after a delay of 3 seconds and ANSI escape 
+// clear the terminal screen after a delay of 3 seconds and ANSI escape
 void yawm()
-{   
+{
     system("color A");
-    printf("Vui long doi");
-    int i,j,a;
-    for(int i = 0; i <= 6; i++)
+    printf("Loading");
+    int i, j, a;
+    for (int i = 0; i <= 6; i++)
     {
-        for(j = 0; j < 100000000; j++) // second loop only excute a = j not printf
-       { a = j;}
+        for (j = 0; j < 100000000; j++) // second loop only excute a = j not printf
+        {
+            a = j;
+        }
         system("color A");
         printf(".");
     }
@@ -62,9 +65,10 @@ void yawm()
 // check if a PIN exists in menu
 bool isExist(Menu menu, int PIN)
 {
-    for(int i = 0; i < menu.total; i++)
+    for (int i = 0; i < menu.total; i++)
     {
-        if(menu.dishes[i].PIN == PIN) return true;
+        if (menu.dishes[i].PIN == PIN)
+            return true;
     }
     printf("Khong mon nao co ma PIN %d", PIN);
     return false;
@@ -74,9 +78,9 @@ bool isExist(Menu menu, int PIN)
 // if delete "many" at "one" time then use this
 bool isAlreadyPIN(int array[], int i)
 {
-    for(int j = 0; j < i; j++)
+    for (int j = 0; j < i; j++)
     {
-        if(array[j] == array[i])
+        if (array[j] == array[i])
         {
             printf("mon an voi ma PIN %d da duoc chon de xoa tu truoc.\n", array[i]);
             return true;
@@ -88,9 +92,9 @@ bool isAlreadyPIN(int array[], int i)
 // compare with menu
 bool isRepeatPIN(Menu menu, int PIN)
 {
-    for(int i = 0; i < menu.total; i++)
+    for (int i = 0; i < menu.total; i++)
     {
-        if(menu.dishes[i].PIN == PIN)
+        if (menu.dishes[i].PIN == PIN)
         {
             return true; // if PIN is repeated
         }
@@ -100,84 +104,89 @@ bool isRepeatPIN(Menu menu, int PIN)
 // check if new PINS in "adding multiple dishes" are unique
 bool isSamePIN(Dish dishes[], int i)
 {
-    for(int j = 0; j < i; j++)
+    for (int j = 0; j < i; j++)
     {
-        if(dishes[j].PIN == dishes[i].PIN)
-        return true;
+        if (dishes[j].PIN == dishes[i].PIN)
+            return true;
     }
     return false;
 }
 // check for "duplicate" nameS in the dish array (menu)
-bool isSameName(Menu menu, char* name)
+bool isSameName(Menu menu, char *name)
 {
-    for(int i = 0; i < menu.total; i++)
+    for (int i = 0; i < menu.total; i++)
     {
-        if(strcasecmp(menu.dishes[i].name, name) == 0) return true;
+        if (strcasecmp(menu.dishes[i].name, name) == 0)
+            return true;
     }
     return false;
 }
 // check if " new names" are "same" with "added names"
 bool isNoDif(Dish dishes[], int i)
 {
-    for(int j = 0; j < i; j++)
+    for (int j = 0; j < i; j++)
     {
-        if(strcasecmp(dishes[j].name, dishes[i].name) == 0) return true;
+        if (strcasecmp(dishes[j].name, dishes[i].name) == 0)
+            return true;
     }
     return false;
 }
-//check if user type in yes YES Y y 
-bool isYes(char* c)
+// check if user type in yes YES Y y
+bool isYes(char *c)
 {
-    for(int i = 0; c[i] != '\0'; i++)
+    for (int i = 0; c[i] != '\0'; i++)
     {
         c[i] = myToLower(c[i]);
     }
     return (strcmp(c, "yes") == 0 || strcmp(c, "y") == 0);
 }
 // check if user type in no NO N n
-bool isNo(char* c)
+bool isNo(char *c)
 {
-    for(int i = 0; c[i] != '\0'; i++)
+    for (int i = 0; c[i] != '\0'; i++)
     {
-        c[i] =myToLower(c[i]);
+        c[i] = myToLower(c[i]);
     }
     return (strcmp(c, "no") == 0 || strcmp(c, "n") == 0);
 }
 char myToLower(char c)
 {
-    if(c >= 'A' && c <= 'Z')
+    if (c >= 'A' && c <= 'Z')
     {
         return c - ('A' - 'a');
     }
     return c;
 }
 char myToUpper(char c)
-{   
-    if(c >= 'a' && c <= 'z')
+{
+    if (c >= 'a' && c <= 'z')
     {
         return c + ('A' - 'a');
     }
     return c;
 }
+int myIsAlpha(char c)
+{
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
 // ask user to confirm save changes
 void arg()
-{   
+{
     do
     {
         printf("Ban co muon luu thay doi khong? [Y/N]: ");
         scanf("%c", &ans);
         clstd();
-    } 
-    while(myToUpper(ans) != 'N' && myToUpper(ans) != 'Y' && myToUpper(ans) != 'X');
+    } while (myToUpper(ans) != 'N' && myToUpper(ans) != 'Y' && myToUpper(ans) != 'X');
 }
 /*----------------------------------------------------------------------------*/
 /*                                 ORDER ID                                   */
-//function to prevent user from entering repeated orderID
+// function to prevent user from entering repeated orderID
 bool isRepeatOrderID(Order orders[100], int orderID)
 {
-    for(int i = 0; i < 100  ; i++)
+    for (int i = 0; i < 100; i++)
     {
-        if(orders[i].orderID == orderID)
+        if (orders[i].orderID == orderID)
         {
             printf("Ma don hang %d da ton tai. Xin moi nhap lai\n", orderID);
             return true;
@@ -187,24 +196,24 @@ bool isRepeatOrderID(Order orders[100], int orderID)
 }
 bool isNotExistOrderID(Order orders[100], int orderID)
 {
-    for(int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++)
     {
-        if(orders[i].orderID == orderID)
+        if (orders[i].orderID == orderID)
         {
             return false;
         }
     }
-    printf("Khong tim thay ma don hang %d\n", orderID);
+    printf("Unable to find order with ID %d\n", orderID);
     return true;
 }
-//function to check if orderID is valid
+// function to check if orderID is valid
 bool parseInt(char *string, int *integer)
-{   
-    int stringlength = strlen(string);    
+{
+    int stringlength = strlen(string);
     // Remove leading white spaces
     int startSliceIndex = 0;
     for (int i = 0; i < stringlength; i++)
-    {   
+    {
         if (string[i] != ' ' && string[i] != '\t' && string[i] != '\n')
         {
             startSliceIndex = i;
@@ -222,7 +231,7 @@ bool parseInt(char *string, int *integer)
             break;
         }
     }
-    
+
     // Extract the string without white spaces
     char removedWhiteSpaceString[MAX_STRING_LENGTH];
     int removedWhiteSpaceStringLength = 0;
@@ -248,15 +257,15 @@ bool parseInt(char *string, int *integer)
 
     // Check if the string is empty
     if (removedWhiteSpaceStringLength == 0)
-    {   
+    {
         return false;
     }
-    
+
     // Check if the string contains only digits by using ACSII code
     for (int i = 0; i < removedWhiteSpaceStringLength; i++)
     {
         if (removedWhiteSpaceString[i] < '0' || removedWhiteSpaceString[i] > '9')
-        {   
+        {
             return false;
         }
     }
@@ -266,31 +275,47 @@ bool parseInt(char *string, int *integer)
     for (int i = 0; i < removedWhiteSpaceStringLength; i++)
     {
         int digit = removedWhiteSpaceString[i] - '0'; // Example: '5' - '0' => 53 - 48 = 5
-        *integer = *integer * 10 + digit; // Explain: 123: 0 * 10 + 1 => 1 * 10 + 2 => 12 * 10 + 3 = 123
+        
+        if (isNegative) {
+            int nextInteger = *integer * 10 - digit;             // Explain: -123: 0 * 10 - 1 => -1 * 10 - 2 => -12 * 10 - 3 = -123
+            if (nextInteger > *integer)
+            {   
+                printf("\033[1;31m");
+                printf("Error: Integer overflow\n");
+                printf("\033[0m");
+                return false;
+            }
+            *integer = nextInteger;
+        } else {
+            int nextInteger = *integer * 10 + digit;             // Explain: 123: 0 * 10 + 1 => 1 * 10 + 2 => 12 * 10 + 3 = 123
+            if (nextInteger < *integer)
+            {   
+                printf("\033[1;31m");
+                printf("Error: Integer overflow\n");
+                printf("\033[0m");
+                return false;
+            }
+            *integer = nextInteger;
+        }
     }
 
-    // Return negative number if the string is negative
-    if (isNegative)
-    {
-        *integer = -(*integer);
-    }
     return true;
 }
 
-//function to check if integer is negative or not
+// function to check if integer is negative or not
 bool isValidOrderID(int orderID)
 {
-    if(orderID <= 0)
-    {   
+    if (orderID <= 0)
+    {
         printf("Ma don hang khong the am hoac bang 0\n");
         return false;
     }
     return true;
 }
-//function to check for the end of file
-bool isEOF(FILE* file)
+// function to check for the end of file
+bool isEOF(FILE *file)
 {
-    if(feof(file))
+    if (feof(file))
     {
         printf("End of file\n");
         return true;
@@ -303,79 +328,79 @@ bool isEOF(FILE* file)
 bool isLeapYear(int year)
 {
     return year % 400 == 0 || (year % 4 == 0 && year % 100 != 0);
-    //explain: if year is divisible by 400 or divisible by 4 but not divisible by 100
-    //then it is a leap year
+    // explain: if year is divisible by 400 or divisible by 4 but not divisible by 100
+    // then it is a leap year
 }
 bool isValidDate(int date)
-{   
-    //extract day, month, year from date format yyyymmdd
+{
+    // extract day, month, year from date format yyyymmdd
     int day = date % 100;
     int month = (date / 100) % 100;
     int year = date / 10000;
-    if(year < 2021 || year > 9999)
+    if (year < 2021 || year > 9999)
     {
         return false;
     }
-    if(month < 1 || month > 12)
+    if (month < 1 || month > 12)
     {
         return false;
     }
-    if(day < 1 || day > 31)
+    if (day < 1 || day > 31)
     {
         return false;
     }
-    if(month == 2)
+    if (month == 2)
     {
-        if(isLeapYear(year) && day > 29)
+        if (isLeapYear(year) && day > 29)
         {
             return false;
         }
-        if(!isLeapYear(year) && day > 28)
+        if (!isLeapYear(year) && day > 28)
         {
             return false;
         }
     }
-        if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)
-        {
-            return false;
-        }
+    if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)
+    {
+        return false;
+    }
     return true;
 }
-//function to take 08-05-2024 as the start date , check if newly created day cannot be earlier than the start date
-//function to check if a date exists in the file
-//date is in the format dd-mm-yyyy and it is a string
-bool isDateExist(char* date1, char* date2)
-{   
+// function to take 08-05-2024 as the start date , check if newly created day cannot be earlier than the start date
+// function to check if a date exists in the file
+// date is in the format dd-mm-yyyy and it is a string
+bool isDateExist(char *date1, char *date2)
+{
     int ExistDate = 0;
     int orderFilesTotal = 0;
     char listOrderFiles[MAX][MAX];
     getListOrders(listOrderFiles, &orderFilesTotal);
-    for(int i = 0; i < orderFilesTotal; i++)
+    for (int i = 0; i < orderFilesTotal; i++)
     {
         listOrderFiles[i][strlen(listOrderFiles[i]) - 4] = '\0';
     }
 
-    //check if 2 dates exist in listOrderFiles
-    for(int i = 0; i < orderFilesTotal; i++)
+    // check if 2 dates exist in listOrderFiles
+    for (int i = 0; i < orderFilesTotal; i++)
     {
-        if(strcmp(date1,listOrderFiles[i]) == 0)
+        if (strcmp(date1, listOrderFiles[i]) == 0)
         {
             ExistDate = 1;
         }
     }
-    for(int i = 0; i < orderFilesTotal; i++)
+    for (int i = 0; i < orderFilesTotal; i++)
     {
-        if(strcmp(date2,listOrderFiles[i]) == 0)
+        if (strcmp(date2, listOrderFiles[i]) == 0)
         {
             ExistDate = 1;
         }
     }
-    if(ExistDate == 1)
-    {   
+    if (ExistDate == 1)
+    {
         printf("Date exists.\n");
         return true;
     }
-    else if(ExistDate == 0)
+    else if (ExistDate == 0)
     {
         printf("Date does not exist.\n");
         return false;
@@ -383,35 +408,13 @@ bool isDateExist(char* date1, char* date2)
     return false;
 }
 
-//create atoi function for date
-int dateToInt(char* date)
+// create atoi function for date
+int dateToInt(char *date)
 {
     int day, month, year;
-    //extract day, month, year from date format dd-mm-yyyy
+    // extract day, month, year from date format dd-mm-yyyy
     sscanf(date, "%d-%d-%d", &day, &month, &year);
     return year * 10000 + month * 100 + day;
-    //why year is multiplied by 10000, month by 100 and day by 1
-    //because we want to convert date to integer format yyyymmdd
-}
-//create atoi function for day
-int dayToInt(char* date)
-{
-    int day, month, year;
-    //extract day, month, year from date format dd-mm-yyyy
-    sscanf(date, "%d-%d-%d", &day, &month, &year);
-    return day;
-}
-//create atoi function for month
-int monthToInt(char* date)
-{
-    int day, month, year;
-    sscanf(date, "%d-%d-%d", &day, &month, &year);
-    return month;
-}   
-//create atoi function for year
-int yearToInt(char* date)
-{
-    int day, month, year;
-    sscanf(date, "%d-%d-%d", &day, &month, &year);
-    return year;
+    // why year is multiplied by 10000, month by 100 and day by 1
+    // because we want to convert date to integer format yyyymmdd
 }

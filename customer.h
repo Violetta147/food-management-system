@@ -7,9 +7,9 @@
 #include "file-handler/file-handler.h"
 #include "menufunction.h"
 
-void printMenu(Menu menu);
-void header();
-int orderDish(Menu menu, OrderItem *orderItem);
+void printMenu();
+void display();
+int orderDish(OrderItem *orderItem);
 void makeOrder(Order *order);
 void orderAgain(Order *order);
 void createOrderID(Order *order);
@@ -18,81 +18,147 @@ void Customer();
 void calculateBill(Order *order, int *sum, int *sale, int *total);
 bool UnpaidBill();
 
-
-void header()
+void display()
 {
-    for (int i = 0; i < 25; i++)
-    {
-        printf(" ");
-    }
-    // print header in pink color using ansii code
-    printf("\033[0;35m");
-    printf("WELCOME TO TEDDY RESTAURANT\n");
-    // reset to normal color
-    printf("\033[0m");
-    printf("\n");
-    for (int i = 0; i < 13; i++)
-    {
-        printf(" ");
-    }
-    printf("Ma mon an");
-    for (int i = 0; i < 10; i++)
-    {
-        printf(" ");
-    }
-    printf("Ten mon an");
-    for (int i = 0; i < 15; i++)
-    {
-        printf(" ");
-    }
-    printf("Gia tien");
-    printf("\n");
-    for (int i = 0; i < 10; i++)
-    {
-        printf(" ");
-    }
-    for (int i = 0; i < 60; i++)
-    {
-        printf("_");
-    }
-    printf("\n");
-}
-void printMenu(Menu menu)
-{
-    header();
     for (int i = 0; i < menu.total; i++)
     {
-        printf("\t\t%d    \t\t%-22s    %-15d", menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].price);
-        printf("\n");
+        if (menu.dishes[i].Status == 1)
+        {
+            char hole[5];
+            sprintf(hole, "%d", menu.dishes[i].PIN);
+            int q = ((11 - strlen(hole)) / 2) + strlen(hole) + (strlen(hole) + 1) % 2;
+            printf("%9c%*d", '|', q, menu.dishes[i].PIN);
+            int F = ((11 - strlen(hole)) / 2);
+            for (; F > 0; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            q = ((24 - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name)) % 2;
+            printf("%*s", q, menu.dishes[i].name);
+            F = ((24 - strlen(menu.dishes[i].name)) / 2);
+            for (; F > 2; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            // print price and unit on the same line seperated by /
+            printf("%*d/%s|", 21 - strlen(menu.dishes[i].Unit) - 1, menu.dishes[i].Price, menu.dishes[i].Unit); //-1 because of / 
+            printf("\n");
+        }
+        else if (toupper(mode) == 'A')
+        {
+            if (menu.dishes[i].Status == 0)
+            {
+                printf("\033[0;31m"); // SET COLOR TO RED
+            }
+            char hole[5];
+            sprintf(hole, "%d", menu.dishes[i].PIN);
+            int q = ((11 - strlen(hole)) / 2) + strlen(hole) + (strlen(hole) + 1) % 2;
+            printf("%9c%*d", '|', q, menu.dishes[i].PIN);
+            int F = ((11 - strlen(hole)) / 2);
+            for (; F > 0; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            q = ((24 - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name)) % 2;
+            printf("%*s", q, menu.dishes[i].name);
+            F = ((24 - strlen(menu.dishes[i].name)) / 2);
+            for (; F > 2; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            // print price and unit on the same line seperated by /
+            printf("%*d/%s|", 21 - strlen(menu.dishes[i].Unit) - 1, menu.dishes[i].Price, menu.dishes[i].Unit);
+            printf("\n");
+        }
+        // RESET COLOR TO NORMAL
+        printf("\033[0m");
     }
-    printf("\n");
+    return;
+}
+void printMenu()
+{
+    printf("\nWELCOME TO TEDDY RESTAURANT\n");
+    printf("%9c", '+');
+    for (int i = 0; i < 11; i++)
+    {
+        printf("-");
+    }
+    printf("+");
+    for (int i = 0; i < 22; i++)
+    {
+        printf("-");
+    }
+    printf("+");
+    for (int i = 0; i < 21; i++)
+    {
+        printf("-");
+    }
+    printf("+\n");
+    printf("        |    PIN    |        Dishes        |        Price        |\n");
+    printf("\t");
+    printf("|");
+    for (int i = 0; i < 11; i++)
+    {
+        printf("-");
+    }
+    printf("|");
+    for (int i = 0; i < 22; i++)
+    {
+        printf("-");
+    }
+    printf("|");
+    for (int i = 0; i < 21; i++)
+    {
+        printf("-");
+    }
+    printf("|\n");
+    display();
+    printf("%9c", '+');
+    for (int i = 0; i < 11; i++)
+    {
+        printf("-");
+    }
+    printf("+");
+    for (int i = 0; i < 22; i++)
+    {
+        printf("-");
+    }
+    printf("+");
+    for (int i = 0; i < 21; i++)
+    {
+        printf("-");
+    }
+    printf("+\n");
 }
 
-int orderDish(Menu menu, OrderItem *orderItem)
+int orderDish(OrderItem *orderItem)
 {
-    inputPositiveInt("Vui long chon PIN mon an", &orderItem->dish.PIN);
+    inputPositiveInt("Enter PIN of the dish you wanna order", &orderItem->dish.PIN);
     while (true)
     {
         if (orderItem->dish.PIN == 0)
         {
-            printf("Ban da huy viec chon mon an\n");
+            printf("You stopped ordering.\n");
             return 1;
         }
-
         for (int i = 0; i < menu.total; i++)
         {
             if (orderItem->dish.PIN == menu.dishes[i].PIN)
             {
                 orderItem->dish = menu.dishes[i];
-                inputPositiveInt("Vui long nhap so luong", &orderItem->quantity);
-                printf("Ban da chon mon %s voi so luong %d va gia %d\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.price);
+                inputPositiveInt("How many of this dish you want to order", &orderItem->quantity);
+                printf("You chose %s with the amount of %d %s and price for each is %d\n", orderItem->dish.name, orderItem->quantity, orderItem->dish.Unit, orderItem->dish.Price);
                 return 0;
             }
-            // no PIN matches the input
+            // NO PIN FOUND MATCHED THE INPUT
             if (i == menu.total - 1)
             {
-                printf("Khong tim thay mon an tuong ung voi ma PIN %d\n", orderItem->dish.PIN);
-                inputPositiveInt("Vui long chon lai PIN mon an", &orderItem->dish.PIN);
+                printf("DISH WITH PIN %d NOT FOUND.\n", orderItem->dish.PIN);
+                inputPositiveInt("Enter PIN of the dish you wanna orer", &orderItem->dish.PIN);
             }
         }
     }
@@ -101,40 +167,40 @@ int orderDish(Menu menu, OrderItem *orderItem)
 void makeOrder(Order *order)
 {
     int i = 0;
-    int Contflag = 0;
+    int ContFlag = 0;
     menu = readMenu("menu.txt");
-    OrderItem orderitem;
+    OrderItem OrderItem;
     order->total = 0;
     // yawm();
     system("color 0F");
-    printMenu(menu);
+    printMenu();
     while (true)
     {
-        orderDish(menu, &orderitem);
+        orderDish(&OrderItem);
         // first loop doesn't excute
         for (int j = 0; j < order->total; j++)
         {
-            if (order->items[j].dish.PIN == orderitem.dish.PIN)
+            if (order->items[j].dish.PIN == OrderItem.dish.PIN)
             {
-                order->items[j].quantity += orderitem.quantity;
-                Contflag = 1;
+                order->items[j].quantity += OrderItem.quantity;
+                ContFlag = 1;
                 break;
             }
         }
-        if (Contflag == 0)
+        if (ContFlag == 0)
         {
-            order->items[i] = orderitem;
+            order->items[i] = OrderItem;
             i++;
             order->total++;
             strcpy(order->status, ORDER_PROCESSING);
         }
         else
-            Contflag = 0;
-        if (ynQuestion("Ban co muon dat mon an khac khong?") == 0)
+            ContFlag = 0;
+        if (ynQuestion("Do you want to order anything else?") == 0)
         {
             if (order->total > MAX_ORDER_ITEMS)
             {
-                printf("So mon an da dat vuot qua so luong cho phep.\n");
+                printf("Number of dishes exceeds 5.\n");
                 break;
             }
             else
@@ -148,7 +214,7 @@ void makeOrder(Order *order)
 void orderAgain(Order *order)
 {
 
-    if (ynQuestion("Ban co muon dat order khac khong?"))
+    if (ynQuestion("Do you want to make another Order?"))
     {
         Menu menu = readMenu("menu.txt");
         OrderItem orderitem;
@@ -157,7 +223,7 @@ void orderAgain(Order *order)
         makeOrder(order);
     }
     else
-        printf("Cam on quy khach da su dung dich vu cua chung toi.\n");
+        printf("Thank you for using our service.\n");
 }
 // function to create and assign order ID to order not file
 void createOrderID(Order *order)
@@ -166,12 +232,12 @@ void createOrderID(Order *order)
     bool parsedCorrect = true;
     do
     {
-        printf("Vui long nhap Order ID: ");
+        printf("Please enter ORDER ID: ");
         fgets(buffer, BUFFER_SIZE, stdin);
         parsedCorrect = parseInt(buffer, &order->orderID);
         if (!parsedCorrect)
         {
-            printf("Vui long nhap dung Order ID.\n");
+            printf("ORDER ID INVALID.\n");
         }
     } while (!parsedCorrect);
 }
@@ -197,33 +263,22 @@ void Customer()
     while (isLoop)
     {
         int choice;
-        printf("1. Dat mon va thanh toan.\n");
-        printf("2.Tra hoa don chua thanh toan.\n");
-        printf("3. Thoat.\n");
+        printf("1.Order and pay\n");
+        printf("2.Unpaid bills\n");
+        printf("3.Exit\n");
 
-        inputPositiveInt("Vui long chon chuc nang", &choice);
+        inputPositiveInt("Please choose 1 option", &choice);
         if (choice == 1)
         {
             makeOrder(&order);
             if (order.items[0].dish.PIN == 0)
             {
-                printf("Ban da huy viec dat mon an.\n");
+                printf("You have not ordered anything.\n");
                 break;
             }
-            else if (order.items[0].dish.PIN != 0)
+            else if (order.total > 0)
             {
-                for (int i = 0; i < order.total; i++)
-                {
-                    if (order.items[i].dish.PIN == 0)
-                    {
-                        break;
-                    }
-                }
-                calculateBill(&order, &sum, &sale, &total);
-                resetOrder(&order);
-            }
-            else
-            {
+                printf("Calculating bill...\n");
                 calculateBill(&order, &sum, &sale, &total);
                 resetOrder(&order);
             }
@@ -234,7 +289,7 @@ void Customer()
             while (ContinueToPay)
             {
                 UnpaidBill();
-                ContinueToPay = ynQuestion("Ban co muon tiep tuc tra hoa don chua thanh toan khong?");
+                ContinueToPay = ynQuestion("Do you want to continue paying for unpaid bills?");
             }
         }
         else if (choice == 3)

@@ -10,148 +10,213 @@
 #include "customer.h"
 
 // function prototypes
+void printMenu();
+void display();
+
 void Erase();
-void Delete(int PIN);
+void Delete(int arrayPIN[], int count);
 void wandp();
 void resetMenu();
+
 void appendMenu();
-void printMenu(Menu menu);
-void custom(Menu menu);
+void custom();
 void Customize(int PIN);
-int ynQuestion(const char *question);
-void input(const char *question, char *str);
-void inputInt(const char *question, int *num);
+
 void inputPositiveInt(const char *question, int *num);
+void inputInt(const char *question, int *num);
+void input(const char *question, char str[]);
+int ynQuestion(const char *question);
 
 // 1. DELETE
 /*----------------------------------------------------------------------*/
 // function to delete one dish in the menu at a time
 void Erase()
 {
-    int FoodPIN;
-    inputInt("Nhap ma PIN cua mon an ban muon xoa", &FoodPIN);
-    while (isRepeatPIN(menu, FoodPIN) == false || FoodPIN < 0)
+    int count = 1;
+    int del[MAX];
+    inputInt("Enter the PIN of the dish you want to delete", &del[0]);
+    while (isRepeatPIN(menu, del[0]) == false || del[0] < 0)
     {
-        if (FoodPIN < 0)
+        if (del[0] < 0)
         {
-            printf("Vui long nhap so nguyen ko am!\n");
-            inputInt("Nhap ma PIN cua mon an ban muon xoa", &FoodPIN);
+            printf("Please enter non negative integer!\n");
+            inputInt("Enter the PIN of the dish you want to delete", &del[0]);
         }
         else
         {
-            printf("Khong tim thay mon an tuong ung voi ma PIN %d\n", FoodPIN);
-            inputInt("Nhap ma PIN cua mon an ban muon xoa", &FoodPIN);
+            printf("Did not find the dish with PIN %d\n", del[0]);
+            inputInt("Enter the PIN of the dish you want to delete", &del[0]);
         }
     }
-    if (FoodPIN == 0)
+    do
     {
-        printf("Ban da huy viec chon mon an\n");
-        return;
+        printf("Are you sure you want to delete this dish?(Y/N) : ");
+        scanf("%c", &ans);
+        clstd();
+    } while (myToUpper(ans) != 'N' && myToUpper(ans) != 'Y' && myToUpper(ans) != 'X');
+    if (myToUpper(ans) == 'N')
+    {
+        printf("No change was applied.\n");
+        yawm();
+        printMenu();
     }
-    Delete(FoodPIN);
-}
-void Delete(int PIN)
-{
-    int Pivot = 0;
-    for (int i = 0; i < menu.total; i++)
+    else if (myToUpper(ans) == 'Y')
     {
-        if (menu.dishes[i].PIN == PIN)
-        {
-            Pivot = i;
-            break;
-        }
-    }
-    int Yn = ynQuestion("Ban co chac chan muon xoa mon an nay khong?");
-    if (Yn == true)
-    {
-        menu = readMenu("menu.txt");
-        for (int i = Pivot; i < menu.total - 1; i++)
-        {
-            menu.dishes[i] = menu.dishes[i + 1];
-        }
-        menu.total--;
+        Delete(del, count);
+        printf("\033[2J\033[1;1H");
         wandp();
     }
-    else if (Yn == false)
+    else
     {
-        printf("Ban da huy viec xoa mon an\n");
+        printf("Exiting Program.\n");
+        yawm();
+        exit(1);
+    }
+}
+void Delete(int arrayPIN[], int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        for (int j = 0; j < menu.total; j++)
+        {
+            if (menu.dishes[j].PIN == arrayPIN[i])
+            {
+                for (int k = j; k < menu.total - 1; k++)
+                {
+                    menu.dishes[k] = menu.dishes[k + 1];
+                }
+                (menu.total)--;
+                break;
+            }
+        }
     }
     return;
 }
 // write the menu back after deletion and read back into global variable menu
 void wandp()
 {
-    writeMenu("menu.txt", menu, false);
-    printf("Da xoa mon an thanh cong!\n");
+    writeMenu("menu.txt");
+    printf("Change applied.\n");
+    resetMenu();
     menu = readMenu("menu.txt");
-    printMenu(menu);
+    printMenu();
+    return;
+}
+void resetMenu()
+{
+    int arrayPIN[MAX];
+    int count = 0;
+    for (int i = 0; i < menu.total; i++)
+    {
+        arrayPIN[i] = menu.dishes[i].PIN;
+        count++;
+    }
+    Delete(arrayPIN, count);
     return;
 }
 /*----------------------------------------------------------------------*/
 // 2. ADD
 /*----------------------------------------------------------------------*/
-// function to add one dish at a time
+// FUNCTION TO ADD "1 DISH AT A TIME" INTO MENU
 void appendMenu()
 {
     Dish Temp;
-    printf("Tai day ban co the them mon an moi vao menu.\n");
+    printf("Here you can add new dishes into menu.\n");
     /*--------------------------------------------------------*/
-    input("Nhap ten mon an", Temp.name);
+    input("Enter new dish's name", Temp.name);
     while (isSameName(menu, Temp.name) == true)
     {
-        printf("Ten mon an da ton tai. Vui long nhap lai.\n");
-        input("Nhap ten mon an", Temp.name);
+        printf("Please use other names not to confuse anyone.\n");
+        input("Enter new dish's name", Temp.name);
     }
     /*----------------------------------------------------------*/
-    inputInt("Nhap ma PIN", &Temp.PIN);
+    inputInt("Enter new dish's PIN", &Temp.PIN);
     while (isRepeatPIN(menu, Temp.PIN) == true || Temp.PIN < 0)
     {
-        printf("Ma PIN da ton tai. Vui long nhap lai.\n");
-        inputInt("Nhap ma PIN", &Temp.PIN);
+        printf("The PIN you entered already existed before. Please choose another PIN!\n");
+        inputInt("Enter new dish's PIN", &Temp.PIN);
     }
     /*----------------------------------------------------------*/
-    inputPositiveInt("Nhap gia tien", &Temp.price);
-    int Yn = ynQuestion("Ban co chac chan muon them mon an nay khong?");
-    if (Yn == true)
+    inputPositiveInt("Enter new dish's price", &Temp.Price);
+    /*----------------------------------------------------------*/
+    inputInt("Enter the status of the dish (1 for available, 0 for not available)", &Temp.Status);
+    while (Temp.Status != 0 && Temp.Status != 1)
+    {
+        printf("Please enter 1 or 0\n");
+        inputInt("Enter the status of the dish (1 for available, 0 for not available)", &Temp.Status);
+    }
+    /*----------------------------------------------------------*/
+    input("Ener new dish's Unit", Temp.Unit);
+    while (true)
+    {
+        for (int i = 0; i < strlen(Temp.Unit); i++)
+        {
+            if (myIsAlpha(Temp.Unit[i]) == false)
+            {
+                printf("Unit should not include special characters or number\n");
+                input("Enter dish's new unit", Temp.Unit);
+            }
+        }
+        break;
+    }
+    /*----------------------------------------------------------*/
+    // CONFIRMATION
+    //  y for yes, n for no, x for exit
+    do
+    {
+        printf("Are you sure you want to add this dish?(Y/N) : ");
+        scanf("%c", &ans);
+        clstd();
+    } while (myToUpper(ans) != 'N' && myToUpper(ans) != 'Y' && myToUpper(ans) != 'X');
+    if (myToUpper(ans) == 'N')
+    {
+        printf("No change was applied.\n");
+        yawm();
+        printMenu();
+    }
+    else if (myToUpper(ans) == 'Y')
     {
         menu.dishes[menu.total] = Temp;
-        menu.total++;
+        ++(menu.total);
+        wandp();
     }
-    // delete the file data and write the new menu(is not necessary because "w" will overwrite the file)
-    //overwrite the file with the new menu
-    printf("\033[2J\033[1;1H");
-    writeMenu("menu.txt", menu, false);
-    menu = readMenu("menu.txt");
-    printMenu(menu);
-    return;
+    else
+    {
+        printf("Exiting Program.\n");
+        yawm();
+        exit(1);
+    }
 }
 /*----------------------------------------------------------------------*/
-// 3. CHANGE
+// 3. CUSTOMIZATION
 /*----------------------------------------------------------------------*/
-// function to change one dish's information at a time
-void custom(Menu menu)
+// FUNCTION TO CUSTOMIZE A DISH
+void custom()
 {
     int FoodPIN;
-    inputInt("Nhap ma PIN cua mon an ban muon thay doi", &FoodPIN);
+    inputInt("Enter the PIN of the dish you wanna customize", &FoodPIN);
     while (isRepeatPIN(menu, FoodPIN) == false || FoodPIN < 0)
     {
         if (FoodPIN < 0)
         {
-            printf("Vui long nhap so nguyen ko am!\n");
-            inputInt("Nhap ma PIN cua mon an ban muon thay doi", &FoodPIN);
+            printf("Please enter non negative integer!\n");
+            inputInt("Enter the PIN of the dish you wanna customize", &FoodPIN);
         }
         else
         {
-            printf("Khong tim thay mon an tuong ung voi ma PIN %d\n", FoodPIN);
-            inputInt("Nhap ma PIN cua mon an ban muon thay doi", &FoodPIN);
+            printf("Sorry but no PIN was found matched code %d\n", FoodPIN);
+            inputInt("Enter the PIN of the dish you wanna customize", &FoodPIN);
         }
     }
     if (FoodPIN == 0)
     {
-        printf("Ban da huy viec chon mon an\n");
+        printf("YOU CANCELLED.\n");
         return;
     }
-    Customize(FoodPIN);
+    else if (FoodPIN != 0)
+    {
+        Customize(FoodPIN);
+    }
 }
 void Customize(int PIN)
 {
@@ -165,44 +230,57 @@ void Customize(int PIN)
             break;
         }
     }
-    printf("Tai day ban co the thay doi nhieu thong tin cua mon an. Nhap 0 doi voi thong tin ban khong muon thay doi.\n");
+    printf("Here you can change dish's information, type '0' if you don't wanna make change to a field.\n");
     /*-----------------------NAME FIELD--------------------------*/
-    printf("Ten mon an hien tai: %s\n", menu.dishes[Pivot].name);
+    printf("Dish current name: %s\n", menu.dishes[Pivot].name);
+    input("Enter dish's new name", Temp.name);
     while (true)
     {
-        input("Nhap ten mon an moi", Temp.name);
         if (isSameName(menu, Temp.name) == true)
         {
-            printf("Ten mon an da ton tai. Vui long nhap lai.\n");
+            printf("Name already exists. Enter another name.\n");
+            input("Enter dish's new name", Temp.name);
         }
         else if (strlen(Temp.name) > MAX)
         {
-            printf("Ten mon an qua dai. Vui long nhap lai.\n");
+            printf("Name's length is too long, max length is 30 characters.\n");
+            input("Enter dish's new name", Temp.name);
         }
         else
         {
-            break;
+            for (int i = 0; i < strlen(Temp.name); i++)
+            {
+                if (myIsAlpha(Temp.name[i]) == false)
+                {
+                    printf("Name should not include special characters or number\n");
+                    input("Enter dish's new name", Temp.name);
+                }
+            }
         }
+        // SUCCESS VALIDATING NAME
+        break;
     }
     if (strcmp(Temp.name, "0") == 0)
-    {
         strcpy(Temp.name, menu.dishes[Pivot].name);
-    }
     /*-----------------------PIN FIELD--------------------------*/
-    printf("Ma PIN hien tai: %d\n", menu.dishes[Pivot].PIN);
+    printf("Dish's current PIN: %d\n", menu.dishes[Pivot].PIN);
+    inputInt("Enter dish's new PIN", &Temp.PIN);
+
     while (true)
     {
-        inputInt("Nhap ma PIN moi", &Temp.PIN);
         if (isRepeatPIN(menu, Temp.PIN) == true)
         {
-            printf("Ma PIN da ton tai. Vui long nhap lai.\n");
+            printf("PIN already exists. Enter another PIN.\n");
+            inputInt("Enter dish's new PIN", &Temp.PIN);
         }
         else if (Temp.PIN < 0)
         {
-            printf("Vui long nhap so nguyen ko am!\n");
+            printf("Please enter non negative integer!\n");
+            inputInt("Enter dish's new PIN", &Temp.PIN);
         }
         else
         {
+            // SUCCESS VALIDATING PIN
             break;
         }
     }
@@ -211,25 +289,68 @@ void Customize(int PIN)
         Temp.PIN = menu.dishes[Pivot].PIN;
     }
     /*-----------------------PRICE FIELD--------------------------*/
-    printf("Gia tien hien tai: %d\n", menu.dishes[Pivot].price);
+    printf("Dish's current price: %d\n", menu.dishes[Pivot].Price);
     while (true)
     {
-        inputPositiveInt("Nhap gia tien moi", &Temp.price);
+        inputPositiveInt("Enter dish's new price", &Temp.Price);
         break;
     }
-    if (Temp.price == 0)
+    if (Temp.Price == 0)
     {
-        Temp.price = menu.dishes[Pivot].price;
+        Temp.Price = menu.dishes[Pivot].Price;
     }
+    /*-----------------------STATUS FIELD--------------------------*/
+
+    printf("Dish's current status: %d\n", menu.dishes[Pivot].Status);
+    int Yn = ynQuestion("Do you want to switch status?");
+    if (Yn == true)
+    {
+        Temp.Status = (menu.dishes[Pivot].Status + 1) % 2;
+    }
+    /*------------------------UNIT FIELD---------------------------*/
+    printf("Dish's current unit: %s\n", menu.dishes[Pivot].Unit);
+    input("Enter dish's new unit", Temp.Unit);
+    while (true)
+    {
+        for (int i = 0; i < strlen(Temp.Unit); i++)
+        {
+            if (myIsAlpha(Temp.Unit[i]) == false)
+            {
+                printf("Unit should not include special characters or number\n");
+                input("Enter dish's new unit", Temp.Unit);
+            }
+        }
+        break;
+    }
+    if (strcmp(Temp.Unit, "0") == 0)
+        strcpy(Temp.Unit, menu.dishes[Pivot].Unit);
+
     /*-----------------------CONFIRMATION--------------------------*/
-    int yn = ynQuestion("Ban co chac chan muon thay doi thong tin mon an nay khong?");
-    if (yn == true)
+    //  y for yes, n for no, x for exit
+    do
+    {
+        printf("Are you sure you want to customize this dish?(Y/N) : ");
+        scanf("%c", &ans);
+        clstd();
+    } while (myToUpper(ans) != 'N' && myToUpper(ans) != 'Y' && myToUpper(ans) != 'X');
+    if (myToUpper(ans) == 'N')
+    {
+        printf("No change was applied.\n");
+        yawm();
+        printMenu();
+    }
+    else if (myToUpper(ans) == 'Y')
     {
         menu.dishes[Pivot] = Temp;
+        printf("\033[2J\033[1;1H");
+        wandp();
     }
-    printf("\033[2J\033[1;1H");
-    wandp(menu.total);
-    return;
+    else
+    {
+        printf("Exiting Program.\n");
+        yawm();
+        exit(1);
+    }
 }
 /*----------------------------------------------------------------------*/
 int ynQuestion(const char *question)
@@ -245,11 +366,11 @@ int ynQuestion(const char *question)
             return true;
         if (isNo(tmp))
             return false;
-        printf("Vui long nhap dung lua chon [Y/N]: ");
+        printf("Please enter yes or no [Y/N]: ");
     }
 }
 // input string + ask question
-void input(const char *question, char str[30])
+void input(const char *question, char str[])
 {
     printf("%s: ", question);
     scanf("%[^\n]%*c", str);
@@ -260,16 +381,12 @@ void inputInt(const char *question, int *num)
     bool isValid = false;
     while (!isValid)
     {
-        printf("%s: ", question);
         char tmp[MAX_STRING_LENGTH];
-        fgets(tmp, MAX_STRING_LENGTH, stdin);
-        fflush(stdin);
-        bool isValidIntegerLength = strlen(tmp) < 10; // 2^32 - 1 has 10 digits
-        bool isValidInteger = parseInt(tmp, num);
-        isValid = isValidInteger && isValidIntegerLength;
+        input(question, tmp);
+        isValid = parseInt(tmp, num);
         if (!isValid)
         {
-            printf("Vui long nhap so nguyen!\n");
+            printf("Please enter integer!\n");
         }
     }
 }
@@ -279,7 +396,7 @@ void inputPositiveInt(const char *question, int *num)
     inputInt(question, num);
     while (*num <= 0)
     {
-        printf("Vui long nhap so nguyen duong!\n");
+        printf("Please enter positive integer!\n");
         inputInt(question, num);
     }
 }
