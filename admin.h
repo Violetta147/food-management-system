@@ -155,8 +155,8 @@ void calculate_popularity_revenue(int *revenue)
     Order TempOrder[100]; // 100 = number of orders in all files.
     int orderFilesTotal = 0;
     int totalOrders = 0;
-    char listOrderFiles[30][30];
-    char listOrderPath[30][30];
+    char listOrderFiles[MAX][MAX];
+    char listOrderPath[MAX][MAX];
     getListOrders(listOrderFiles, &orderFilesTotal);
     int datetoInt[MAX];
     // make listorderfiles without .txt --> date

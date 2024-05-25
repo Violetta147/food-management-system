@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 #include "../structs/dish.h"
 #include "../structs/order.h"
 #include "../constant.h"
@@ -12,8 +13,9 @@
 #define BASE_DATA_PATH "./data/"
 #define INVOICES_PATH "invoices/"
 #define IS_TIME_TO_WRITE_BACK 1
-#define FORMATTED_FIELDS "%3d%14s%10d%7d%11s\n"
-#define FORMATTED_HEADER_FIELDS "%3s%14s%10s%7s%11s\n"
+#define FORMATTED_READ_FIELDS "%3d\t%50[^\t]\t%10d\t%7d%11s\n"
+#define FORMATTED_WRITE_FIELDS "%d\t%s\t%d\t%d\t%s\n"
+#define FORMATTED_HEADER_FIELDS "%s\t%s\t%s\t%s\t%s\n"
 
 // function prototypes
 void writeMenu(const char *fileName);
@@ -39,10 +41,69 @@ void writeMenu(const char *fileName)
         printf("Unable to open file.\n");
         return;
     }
-    fprintf(menuP, FORMATTED_HEADER_FIELDS, "PIN", "Name", "Price", "Status", "Unit");
-    for(int i = 0; i < menu.total; i++)
+    // HEADER
+
+    fprintf(menuP, "%5s\t", "PIN"); // tab for delimitation
+    /*calculate the longest name in menu and adjust the name header to it*/
+    int longestName = strlen(menu.dishes[0].name);
+    for (int i = 1; i < menu.total; i++)
     {
-        fprintf(menuP, FORMATTED_FIELDS, menu.dishes[i].PIN, menu.dishes[i].name, menu.dishes[i].Price, menu.dishes[i].Status, menu.dishes[i].Unit);
+        if (strlen(menu.dishes[i].name) > longestName)
+        {
+            longestName = strlen(menu.dishes[i].name);
+        }
+    }
+    int temp = longestName;
+    int q = ((temp - 4) / 2);
+    temp = longestName;
+    q += (temp + 1) % 2;
+    fprintf(menuP, "%*s", q, "Name");
+    temp = longestName;
+    int F = ((temp - 4) / 2);
+    F += (temp + 1) % 2;
+    F += 4;
+    for (; F > 0; F--)
+    {
+        fprintf(menuP, " ");
+    }
+    // PRICE
+    fprintf(menuP, "\t%s\t", "Price");
+    // STATUS
+    fprintf(menuP, "%s\t", "Status");
+    // UNIT
+    int longestUnit = strlen(menu.dishes[0].Unit);
+    for (int i = 1; i < menu.total; i++)
+    {
+        if (strlen(menu.dishes[i].Unit) > longestUnit)
+        {
+            longestUnit = strlen(menu.dishes[i].Unit);
+        }
+    }
+    q = ((longestUnit - 4) / 2) + (longestUnit + 1) % 2;
+    fprintf(menuP, "%*s\n", q, "Unit");
+    printf("\n");
+    /*----------------------------------------------------------------------------------*/
+    // DATA
+    for (int i = 0; i < menu.total; i++)
+    {
+        fprintf(menuP, "%5d\t", menu.dishes[i].PIN);
+        q = ((longestName - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name) + 1) % 2;
+        fprintf(menuP, "%*s", q, menu.dishes[i].name);
+        F = ((longestName - strlen(menu.dishes[i].name)) / 2);
+        for (; F > 0; F--)
+        {
+            fprintf(menuP, " ");
+        }
+        fprintf(menuP, "\t");
+        // PRICE
+        q = longestName;
+        temp = (int)log10(menu.dishes[i].Price) + 1;
+        fprintf(menuP, "%-*d\t", temp, menu.dishes[i].Price);
+        // STATUS
+        fprintf(menuP, "%d\t", menu.dishes[i].Status);
+        // UNIT
+        q = ((longestUnit - strlen(menu.dishes[i].Unit)) / 2) + strlen(menu.dishes[i].Unit) + (strlen(menu.dishes[i].Unit) + 1) % 2;
+        fprintf(menuP, "%*s\n", q, menu.dishes[i].Unit);
     }
     fclose(menuP);
     return;
@@ -63,13 +124,14 @@ Menu readMenu(const char *fileName)
     menu.total = 0;
     while (true)
     {
-        int result = fscanf(menuP,FORMATTED_FIELDS,
+        int result = fscanf(menuP, FORMATTED_READ_FIELDS,
                             &menu.dishes[menu.total].PIN,
                             menu.dishes[menu.total].name,
                             &menu.dishes[menu.total].Price,
                             &menu.dishes[menu.total].Status,
                             menu.dishes[menu.total].Unit);
-        if (result != 5) break;
+        if (result != 5)
+            break;
         ++menu.total;
     }
     fclose(menuP);

@@ -146,7 +146,7 @@ void appendMenu()
         inputInt("Enter the status of the dish (1 for available, 0 for not available)", &Temp.Status);
     }
     /*----------------------------------------------------------*/
-    input("Ener new dish's Unit", Temp.Unit);
+    input("Enter new dish's Unit", Temp.Unit);
     while (true)
     {
         for (int i = 0; i < strlen(Temp.Unit); i++)

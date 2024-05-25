@@ -36,6 +36,7 @@ int dateToInt(char *date);
 int dayToInt(char *date);
 int monthToInt(char *date);
 int yearToInt(char *date);
+int countDigits(int number);
 
 // clear input buffer
 void clstd()
