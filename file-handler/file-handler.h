@@ -41,10 +41,16 @@ void writeMenu(const char *fileName)
         printf("Unable to open file.\n");
         return;
     }
-    // HEADER
-
-    fprintf(menuP, "%5s\t", "PIN"); // tab for delimitation
-    /*calculate the longest name in menu and adjust the name header to it*/
+    // calculate LONGEST PRICE | LONGEST NAME | LONGEST UNIT
+    int longestPrice = menu.dishes[0].Price;
+    for (int i = 1; i < menu.total; i++)
+    {
+        if (menu.dishes[i].Price > longestPrice)
+        {
+            // find the longest price
+            longestPrice = menu.dishes[i].Price;
+        }
+    }
     int longestName = strlen(menu.dishes[0].name);
     for (int i = 1; i < menu.total; i++)
     {
@@ -53,24 +59,6 @@ void writeMenu(const char *fileName)
             longestName = strlen(menu.dishes[i].name);
         }
     }
-    int temp = longestName;
-    int q = ((temp - 4) / 2);
-    temp = longestName;
-    q += (temp + 1) % 2;
-    fprintf(menuP, "%*s", q, "Name");
-    temp = longestName;
-    int F = ((temp - 4) / 2);
-    F += (temp + 1) % 2;
-    F += 4;
-    for (; F > 0; F--)
-    {
-        fprintf(menuP, " ");
-    }
-    // PRICE
-    fprintf(menuP, "\t%s\t", "Price");
-    // STATUS
-    fprintf(menuP, "%s\t", "Status");
-    // UNIT
     int longestUnit = strlen(menu.dishes[0].Unit);
     for (int i = 1; i < menu.total; i++)
     {
@@ -79,28 +67,112 @@ void writeMenu(const char *fileName)
             longestUnit = strlen(menu.dishes[i].Unit);
         }
     }
-    q = ((longestUnit - 4) / 2) + (longestUnit + 1) % 2;
-    fprintf(menuP, "%*s\n", q, "Unit");
-    printf("\n");
+    /*------------------------HEADER-----------------------*/
+    /*-----------------------------------------------------*/
+
+    // PIN
+    /*-----------------------------------------------------*/
+    fprintf(menuP, "%5s\t", "PIN"); // tab for delimitation
+    /*-----------------------------------------------------*/
+    // NAME
+    /*-----------------------------------------------------*/
+    // adjust spaces to print Name next to PIN
+    int temp = longestName;
+    int q = ((temp - 4) / 2); // 4 = length of "Name"
+    temp = longestName;
+    q += (temp + 1) % 2;
+    fprintf(menuP, "%*s", q, "Name");
+    /*-----------------------------------------------------*/
+    // PRICE
+    /*-----------------------------------------------------*/
+    // adjust spaces to print Price next to Name
+    temp = longestName;
+    int F = ((temp - 4) / 2);
+    F += (temp + 1) % 2;
+    F += 4; // tab = 4 spaces
+    for (; F > 0; F--)
+    {
+        fprintf(menuP, " ");
+    }
+    fprintf(menuP, "%s", "Price");
+    /*-----------------------------------------------------*/
+    // STATUS
+    /*-----------------------------------------------------*/
+    // adjust spaces to print Status next to Price
+    temp = longestPrice;
+    int longestPriceDigits = log10(longestPrice) + 1;
+    temp = longestPriceDigits;
+    temp += 4;      // tab = 4 spaces
+    for (; temp > 0; temp--)
+    {
+        fprintf(menuP, " ");
+    }
+    fprintf(menuP, "%s\t", "Status");
+    /*-----------------------------------------------------*/
+    // UNIT
+    // adjust spaces to print Unit next to Status
+    temp = longestUnit;
+    q = ((temp - 4) / 2);
+    temp = longestUnit;
+    q += (temp + 1) % 2;
+    q += 4;
+    for (; q > 0; q--)
+    {
+        fprintf(menuP, " ");
+    }
+    fprintf(menuP, "%s\n", "Unit");
+    /*-----------------------------------------------------*/
     /*----------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+
     // DATA
     for (int i = 0; i < menu.total; i++)
-    {
+    {   
+        // PIN
+        /*-------------------------------------------------*/
         fprintf(menuP, "%5d\t", menu.dishes[i].PIN);
-        q = ((longestName - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name) + 1) % 2;
+        /*-------------------------------------------------*/
+        //NAME
+        /*-------------------------------------------------*/
+        temp = longestName;
+        int q = ((temp - 4) / 2);
+        temp = longestName;
+        q += (temp + 1) % 2;
         fprintf(menuP, "%*s", q, menu.dishes[i].name);
-        F = ((longestName - strlen(menu.dishes[i].name)) / 2);
-        for (; F > 0; F--)
+        /*-------------------------------------------------*/
+        // PRICE
+        /*-------------------------------------------------*/
+        temp = longestName - strlen(menu.dishes[i].name);
+        temp += 4; // tab = 4 spaces
+        for (; temp > 0; temp--)
         {
             fprintf(menuP, " ");
         }
-        fprintf(menuP, "\t");
-        // PRICE
-        q = longestName;
-        temp = (int)log10(menu.dishes[i].Price) + 1;
-        fprintf(menuP, "%-*d\t", temp, menu.dishes[i].Price);
+        longestPrice = log10(longestPrice) + 1;
+        temp = longestPrice;
+        q = ((temp - 4) / 2);
+        temp = longestPrice;
+        q += (temp + 1) % 2;
+        fprintf(menuP, "%*d", q, menu.dishes[i].Price);
+        /*-------------------------------------------------*/
         // STATUS
-        fprintf(menuP, "%d\t", menu.dishes[i].Status);
+        /*-------------------------------------------------*/
+        temp = longestPriceDigits - log10(menu.dishes[i].Price) + 1;
+        temp += 4; // tab = 4 spaces
+        for (; temp > 0; temp--)
+        {
+            fprintf(menuP, " ");
+        }
+        fprintf(menuP, "%d", menu.dishes[i].Status);
+        /*-------------------------------------------------*/
         // UNIT
         q = ((longestUnit - strlen(menu.dishes[i].Unit)) / 2) + strlen(menu.dishes[i].Unit) + (strlen(menu.dishes[i].Unit) + 1) % 2;
         fprintf(menuP, "%*s\n", q, menu.dishes[i].Unit);

@@ -1,4 +1,2 @@
-  PIN	     Name             	Price	Status	Unit
-    1	 NGUYEN HUU MINH QUAN	200000	1	 kg
-    2	BIEN CAO CUONG     	2000000	1	 kg
-    3	    TRINH MINH DAT   	20000000	1	 kg
+  PIN	     Name             Price          Status	   Unit
+    1	nguyen huu minh quan    120000
