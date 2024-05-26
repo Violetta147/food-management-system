@@ -5,7 +5,7 @@
 typedef struct Dish
 {
     int PIN;
-    char name[100];
+    char name[101];
     int Price;
     int Status;
     char Unit[10];
