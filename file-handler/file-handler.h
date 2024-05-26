@@ -89,12 +89,11 @@ void writeMenu(const char *fileName)
     temp = longestName;
     int F = ((temp - 4) / 2);
     F += (temp + 1) % 2;
-    F += 4; // tab = 4 spaces
     for (; F > 0; F--)
     {
         fprintf(menuP, " ");
     }
-    fprintf(menuP, "%s", "Price");
+    fprintf(menuP, "\t\t\t%s", "Price");
     /*-----------------------------------------------------*/
     // STATUS
     /*-----------------------------------------------------*/
@@ -165,13 +164,13 @@ void writeMenu(const char *fileName)
         /*-------------------------------------------------*/
         // STATUS
         /*-------------------------------------------------*/
-        temp = longestPriceDigits - log10(menu.dishes[i].Price) + 1;
-        temp += 4; // tab = 4 spaces
+        temp = longestPriceDigits - ((int)log10(menu.dishes[i].Price) + 1);
+
         for (; temp > 0; temp--)
         {
             fprintf(menuP, " ");
         }
-        fprintf(menuP, "%d", menu.dishes[i].Status);
+        fprintf(menuP, "\t%d", menu.dishes[i].Status);
         /*-------------------------------------------------*/
         // UNIT
         q = ((longestUnit - strlen(menu.dishes[i].Unit)) / 2) + strlen(menu.dishes[i].Unit) + (strlen(menu.dishes[i].Unit) + 1) % 2;

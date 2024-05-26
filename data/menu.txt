@@ -1,2 +1,2 @@
-  PIN	     Name             Price          Status	   Unit
-    1	nguyen huu minh quan    120000
+  PIN	             Name                 			Price              Status	   Unit
+    1	nguyen huu minh quan nguyen ba vu chinh    1111111111	1y
