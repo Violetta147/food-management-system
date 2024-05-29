@@ -11,8 +11,7 @@
 
 // function prototypes
 void printMenu();
-void display();
-
+void display(int nameWidth, int priceUnitWidth);
 void Erase();
 void Delete(int arrayPIN[], int count);
 void wandp();

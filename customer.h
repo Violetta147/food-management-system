@@ -9,7 +9,7 @@
 
 void header();
 void printMenu();
-void display();
+void display(int nameWidth, int priceUnitWidth);
 int orderDish(OrderItem *orderItem);
 void makeOrder(Order *order);
 void orderAgain(Order *order);
@@ -74,32 +74,62 @@ void header()
 }
 void display(int nameWidth, int priceUnitWidth)
 {
+
     int pinPadding = 0;
     int pinLeftPadding = 0;
     int pinRightPadding = 0;
     int longestPIN = countDigits(menu.dishes[0].PIN);
 
-    for(int i = 1; i < menu.total; i++)
+    for (int i = 1; i < menu.total; i++)
     {
-        if(longestPIN < countDigits(menu.dishes[i].PIN))
+        if (longestPIN < countDigits(menu.dishes[i].PIN))
         {
             longestPIN = countDigits(menu.dishes[i].PIN);
         }
     }
     for (int i = 0; i < menu.total; i++)
-    {   
+    {
         int currentPIN = countDigits(menu.dishes[i].PIN);
-        if(currentPIN <= longestPIN)
+        if (currentPIN <= longestPIN)
         {
-            if(currentPIN == 1)
+            if (currentPIN == 1)
             {
                 pinLeftPadding = 3;
                 pinRightPadding = 3;
                 printf("|%*s%d%*s|", pinLeftPadding, "", menu.dishes[i].PIN, pinRightPadding, "");
-                printf("");
+                if (menu.total == 1)
+                {
+                    int nameRightPadding = nameWidth - 4;
+                    printf("%-*s%*s|", nameWidth, menu.dishes[i].name, nameRightPadding, "");
+                    printf("\n");
+                }
+                else
+                {
+                    int nameRightPadding = nameWidth - strlen(menu.dishes[i].name) + 2;
+                    printf("%-s%*s|", menu.dishes[i].name, nameRightPadding, "");
+                    int priceUnitCurrentWidth = strlen(menu.dishes[i].Unit) + countDigits(menu.dishes[i].Price) + 1;
+                    if (priceUnitCurrentWidth <= 10)
+                    {
+                        if (priceUnitCurrentWidth == 7)
+                        {
+                            int priceUnitPadding = priceUnitWidth - strlen("Price/Unit");
+                            if (priceUnitPadding < 0)
+                            {
+                                priceUnitPadding = -priceUnitPadding + 2;
+                            }
+                            else
+                            {
+                                priceUnitPadding += 2;
+                            }
+                            int priceUnitLeftPadding = priceUnitPadding / 2;
+                            int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
+                            printf(" %*s%d/%s%*s |", priceUnitLeftPadding, "", menu.dishes[i].Price, menu.dishes[i].Unit, priceUnitRightPadding, "");
+                        }
+                    }
+                    printf("\n");
+                }
             }
         }
-        
     }
 }
 void printMenu()
@@ -138,7 +168,9 @@ void printMenu()
 
     int priceUnitPadding = priceUnitWidth - strlen("Price/Unit");
     if (priceUnitPadding < 0)
+    {
         priceUnitPadding = -priceUnitPadding;
+    }
     int priceUnitLeftPadding = priceUnitPadding / 2;
     int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
 
@@ -186,6 +218,23 @@ void printMenu()
     }
     printf("+\n");
     display(nameWidth, priceUnitWidth);
+    // BOTTOM BORDER
+    printf("+");
+    for (int i = 0; i < pinLeftPadding + 3 + pinRightPadding + 2; i++)
+    {
+        printf("-");
+    }
+    printf("+");
+    for (int i = 0; i < nameLeftPadding + 4 + nameRightPadding + 2; i++)
+    {
+        printf("-");
+    }
+    printf("+");
+    for (int i = 0; i < priceUnitLeftPadding + 10 + priceUnitRightPadding + 2; i++)
+    {
+        printf("-");
+    }
+    printf("+\n");
 }
 
 int orderDish(OrderItem *orderItem)

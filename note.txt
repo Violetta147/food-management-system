@@ -262,3 +262,25 @@ for (int i = 0; i < menu.total; i++)
         printf("\033[0m");
     }
     return;
+    strlen(menu.dishes[i].Unit) + countDigits(menu.dishes[i].Price) + 1
+    int priceUnitPadding = priceUnitWidth - strlen("Price/Unit");
+                        if (priceUnitPadding < 0)
+                        {
+                            priceUnitPadding = -priceUnitPadding;
+                        }
+                        int priceUnitLeftPadding = priceUnitPadding / 2;
+                        int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
+                        printf(" %*s%d/%s%*s |", priceUnitLeftPadding, "", menu.dishes[i].Price, menu.dishes[i].Unit, priceUnitRightPadding, "");
+                        int priceUnitPadding = priceUnitWidth - strlen("Price/Unit");
+    if (priceUnitPadding < 0)
+    {
+        priceUnitPadding = -priceUnitPadding;
+    }
+    int priceUnitLeftPadding = priceUnitPadding / 2;
+    int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
+      int priceUnitLeftPadding = priceUnitPadding / 2;
+    int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
+    printf("%d\n", priceUnitPadding);
+ int priceUnitPadding = priceUnitWidth - strlen(menu.dishes[i].Unit) - countDigits(menu.dishes[i].Price) + 1;
+                    printf(" %*s%d/%s%*s |", priceUnitPadding / 2, "", menu.dishes[i].Price, menu.dishes[i].Unit, priceUnitPadding - (priceUnitPadding / 2), "");
+                    
