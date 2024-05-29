@@ -42,14 +42,14 @@ int countDigits(int number);
 void clstd()
 {
     int c;
-    while ((c = getchar()) != '\n' && c != EOF)
+    while ((c = getchar()) != '\n')
         ;
     return;
 }
 // clear the terminal screen after a delay of 3 seconds and ANSI escape
 void yawm()
 {
-    system("color A");
+    printf("\033[0;32m");
     printf("Loading");
     int i, j, a;
     for (int i = 0; i <= 6; i++)
@@ -58,9 +58,10 @@ void yawm()
         {
             a = j;
         }
-        system("color A");
+        printf("\033[0;32m");
         printf(".");
     }
+    printf("\033[0m");
     printf("\033[2J\033[1;1H");
 }
 // check if a PIN exists in menu
@@ -207,9 +208,24 @@ bool isNotExistOrderID(Order orders[100], int orderID)
     printf("Unable to find order with ID %d\n", orderID);
     return true;
 }
+int countDigits(int number)
+{
+    int count = 0;
+    while (number != 0)
+    {
+        number /= 10;
+        ++count;
+    }
+    return count;
+}
 // function to check if orderID is valid
 bool parseInt(char *string, int *integer)
 {
+    // check if user enter 'enter'
+    if (string[0] == '\n')
+    {
+        return false;
+    }
     int stringlength = strlen(string);
     // Remove leading white spaces
     int startSliceIndex = 0;
@@ -276,21 +292,24 @@ bool parseInt(char *string, int *integer)
     for (int i = 0; i < removedWhiteSpaceStringLength; i++)
     {
         int digit = removedWhiteSpaceString[i] - '0'; // Example: '5' - '0' => 53 - 48 = 5
-        
-        if (isNegative) {
-            int nextInteger = *integer * 10 - digit;             // Explain: -123: 0 * 10 - 1 => -1 * 10 - 2 => -12 * 10 - 3 = -123
+
+        if (isNegative)
+        {
+            int nextInteger = *integer * 10 - digit; // Explain: -123: 0 * 10 - 1 => -1 * 10 - 2 => -12 * 10 - 3 = -123
             if (nextInteger > *integer)
-            {   
+            {
                 printf("\033[1;31m");
                 printf("Error: Integer overflow\n");
                 printf("\033[0m");
                 return false;
             }
             *integer = nextInteger;
-        } else {
-            int nextInteger = *integer * 10 + digit;             // Explain: 123: 0 * 10 + 1 => 1 * 10 + 2 => 12 * 10 + 3 = 123
+        }
+        else
+        {
+            int nextInteger = *integer * 10 + digit; // Explain: 123: 0 * 10 + 1 => 1 * 10 + 2 => 12 * 10 + 3 = 123
             if (nextInteger < *integer)
-            {   
+            {
                 printf("\033[1;31m");
                 printf("Error: Integer overflow\n");
                 printf("\033[0m");
@@ -302,7 +321,6 @@ bool parseInt(char *string, int *integer)
 
     return true;
 }
-
 // function to check if integer is negative or not
 bool isValidOrderID(int orderID)
 {

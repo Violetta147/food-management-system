@@ -1,2 +1,5 @@
-  PIN	Name    	Price 	Status	Unit
-  123	NGUYEN \	123132	1     	y
+  PIN	Name                	Price	Status	Unit
+    1	nguyen huu minh quan	12000	1    	kg
+  200	bien cao cuong      	20000	1    	genius
+   32	banana slash        	20000	1    	y
+ 4444	watermelon          	20000	1    	y

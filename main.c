@@ -20,7 +20,7 @@ int main()
         {
             printf("To enter ADMIN mode please input PASSWORD.\n");
             conf();
-            menu = readMenu("menu.txt");
+            readMenu("menu.txt");
             printMenu();
             do
             {

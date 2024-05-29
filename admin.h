@@ -51,7 +51,7 @@ void conf()
         clstd();
         if (strcmp(pass, PASS) == 0)
         {
-            system("color 02");
+            printf("\033[0;32m");
             printf("\n");
             for(int i = 0; i < 20; i++)
             {
@@ -82,7 +82,7 @@ void conf()
             printf("\n");
             yawm();
             // RESET COLOR TO NORMAL
-            system("color 07");
+            printf("\033[0m");
             break;
         }
         else
@@ -205,7 +205,7 @@ void calculate_popularity_revenue(int *revenue)
         pop[i].Dish.Price = 0;
         pop[i].Dish.name[0] = '\0';
     }
-    menu = readMenu("menu.txt");
+    readMenu("menu.txt");
     for (int i = 0; i < menu.total; i++)
     {
         for (int j = 0; j < totalOrders; j++)

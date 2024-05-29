@@ -110,7 +110,7 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
 
     printf("__________________________________________________________________________________________\n");
     printf("ORDER ID: %03d\n", order->orderID);
-    printf("%18s %19s %19s %18s %15s %15s\n", "PIN", "Name", "Price", "Quantity", "Unit", "Total");
+    printf("%18s %19s %18s %19s %15s\n", "PIN", "Name", "Quantity", "Price", "Total");
     printf("__________________________________________________________________________________________\n");
 
     for (int i = 0; i < order->total; i++)
@@ -119,8 +119,9 @@ void calculateBill(Order *order, int *sum, int *sale, int *total)
         {
             break;
         }
-        printf("%18d %21s\n", order->items[i].dish.PIN, order->items[i].dish.name);
-        printf("%19d %15d %18s %15d\n", order->items[i].dish.Price, order->items[i].quantity, order->items[i].dish.Unit, order->items[i].dish.Price * order->items[i].quantity);
+        //middle align the pin corresponding to "PIN" header and print only it
+        
+
         printf("__________________________________________________________________________________________\n");
     }
 

@@ -24,7 +24,7 @@ void Customize(int PIN);
 
 void inputPositiveInt(const char *question, int *num);
 void inputInt(const char *question, int *num);
-void input(const char *question, char str[]);
+bool input(const char *question, char str[]);
 int ynQuestion(const char *question);
 
 // 1. DELETE
@@ -98,7 +98,7 @@ void wandp()
     writeMenu("menu.txt");
     printf("Change applied.\n");
     resetMenu();
-    menu = readMenu("menu.txt");
+    readMenu("menu.txt");
     printMenu();
     return;
 }
@@ -152,9 +152,9 @@ void appendMenu()
         for (int i = 0; i < strlen(Temp.Unit); i++)
         {
             if (myIsAlpha(Temp.Unit[i]) == false)
-            {
+            {   
                 printf("Unit should not include special characters or number\n");
-                input("Enter dish's new unit", Temp.Unit);
+                input("Enter dish's new Unit", Temp.Unit);
             }
         }
         break;
@@ -370,11 +370,17 @@ int ynQuestion(const char *question)
     }
 }
 // input string + ask question
-void input(const char *question, char str[])
+bool input(const char *question, char str[])
 {
     printf("%s: ", question);
-    scanf("%[^\n]%*c", str);
+    fgets(str, MAX_STRING_LENGTH, stdin);
+    str[strlen(str) - 1] = '\0';
     fflush(stdin);
+    if(strlen(str) > 0)
+    {
+        return true;
+    }
+    return false;
 }
 void inputInt(const char *question, int *num)
 {
@@ -382,8 +388,7 @@ void inputInt(const char *question, int *num)
     while (!isValid)
     {
         char tmp[MAX_STRING_LENGTH];
-        input(question, tmp);
-        isValid = parseInt(tmp, num);
+        isValid = input(question, tmp) && parseInt(tmp, num);
         if (!isValid)
         {
             printf("Please enter integer!\n");

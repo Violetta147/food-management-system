@@ -7,6 +7,7 @@
 #include "file-handler/file-handler.h"
 #include "menufunction.h"
 
+void header();
 void printMenu();
 void display();
 int orderDish(OrderItem *orderItem);
@@ -18,126 +19,179 @@ void Customer();
 void calculateBill(Order *order, int *sum, int *sale, int *total);
 bool UnpaidBill();
 
-void display()
+void header()
 {
-    for (int i = 0; i < menu.total; i++)
+    for (int i = 0; i < 20; i++)
     {
-        if (menu.dishes[i].Status == 1)
-        {
-            char hole[5];
-            sprintf(hole, "%d", menu.dishes[i].PIN);
-            int q = ((11 - strlen(hole)) / 2) + strlen(hole) + (strlen(hole) + 1) % 2;
-            printf("%9c%*d", '|', q, menu.dishes[i].PIN);
-            int F = ((11 - strlen(hole)) / 2);
-            for (; F > 0; F--)
-            {
-                printf(" ");
-            }
-            printf("|");
-            q = ((24 - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name)) % 2;
-            printf("%*s", q, menu.dishes[i].name);
-            F = ((24 - strlen(menu.dishes[i].name)) / 2);
-            for (; F > 2; F--)
-            {
-                printf(" ");
-            }
-            printf("|");
-            // print price and unit on the same line seperated by /
-            printf("%*d/%s|", 21 - strlen(menu.dishes[i].Unit) - 1, menu.dishes[i].Price, menu.dishes[i].Unit); //-1 because of / 
-            printf("\n");
-        }
-        else if (toupper(mode) == 'A')
-        {
-            if (menu.dishes[i].Status == 0)
-            {
-                printf("\033[0;31m"); // SET COLOR TO RED
-            }
-            char hole[5];
-            sprintf(hole, "%d", menu.dishes[i].PIN);
-            int q = ((11 - strlen(hole)) / 2) + strlen(hole) + (strlen(hole) + 1) % 2;
-            printf("%9c%*d", '|', q, menu.dishes[i].PIN);
-            int F = ((11 - strlen(hole)) / 2);
-            for (; F > 0; F--)
-            {
-                printf(" ");
-            }
-            printf("|");
-            q = ((24 - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name)) % 2;
-            printf("%*s", q, menu.dishes[i].name);
-            F = ((24 - strlen(menu.dishes[i].name)) / 2);
-            for (; F > 2; F--)
-            {
-                printf(" ");
-            }
-            printf("|");
-            // print price and unit on the same line seperated by /
-            printf("%*d/%s|", 21 - strlen(menu.dishes[i].Unit) - 1, menu.dishes[i].Price, menu.dishes[i].Unit);
-            printf("\n");
-        }
-        // RESET COLOR TO NORMAL
-        printf("\033[0m");
+        printf(" ");
     }
-    return;
+    printf("#     # ####### #        #####  ####### #     # #######    ####### #######\n");
+    for (int i = 0; i < 20; i++)
+    {
+        printf(" ");
+    }
+    printf("#  #  # #       #       #     # #     # ##   ## #             #    #     #  \n");
+    for (int i = 0; i < 20; i++)
+    {
+        printf(" ");
+    }
+    printf("#  #  # #       #       #       #     # # # # # #             #    #     #  \n");
+    for (int i = 0; i < 20; i++)
+    {
+        printf(" ");
+    }
+    printf("#  #  # #####   #       #       #     # #  #  # #####         #    #     #  \n");
+    for (int i = 0; i < 20; i++)
+    {
+        printf(" ");
+    }
+    printf("#  #  # #       #       #       #     # #     # #             #    #     #  \n");
+    for (int i = 0; i < 20; i++)
+    {
+        printf(" ");
+    }
+    printf("#  #  # #       #       #     # #     # #     # #             #    #     #  \n");
+    for (int i = 0; i < 20; i++)
+    {
+        printf(" ");
+    }
+    printf(" ## ##  ####### #######  #####  ####### #     # #######       #    #######  \n");
+
+    printf("\n");
+
+    printf("####### ####### ######  ######  #     #    ######  #######  #####  #######    #    #     # ######     #    #     # #######\n");
+    printf("   #    #       #     # #     #  #   #     #     # #       #     #    #      # #   #     # #     #   # #   ##    #    #   \n");
+    printf("   #    #       #     # #     #   # #      #     # #       #          #     #   #  #     # #     #  #   #  # #   #    #   \n");
+    printf("   #    #####   #     # #     #    #       ######  #####    #####     #    #     # #     # ######  #     # #  #  #    #    \n");
+    printf("   #    #       #     # #     #    #       #   #   #             #    #    ####### #     # #   #   ####### #   # #    #    \n");
+    printf("   #    #       #     # #     #    #       #    #  #       #     #    #    #     # #     # #    #  #     # #    ##    #    \n");
+    printf("   #    ####### ######  ######     #       #     # #######  #####     #    #     #  #####  #     # #     # #     #    #    \n");
+
+    printf("\n");
+
+    yawm();
+    printf("\033[2J\033[1;1H");
+}
+void display(int nameWidth, int priceUnitWidth)
+{
+    int pinPadding = 0;
+    int pinLeftPadding = 0;
+    int pinRightPadding = 0;
+    int longestPIN = countDigits(menu.dishes[0].PIN);
+
+    for(int i = 1; i < menu.total; i++)
+    {
+        if(longestPIN < countDigits(menu.dishes[i].PIN))
+        {
+            longestPIN = countDigits(menu.dishes[i].PIN);
+        }
+    }
+    for (int i = 0; i < menu.total; i++)
+    {   
+        int currentPIN = countDigits(menu.dishes[i].PIN);
+        if(currentPIN <= longestPIN)
+        {
+            if(currentPIN == 1)
+            {
+                pinLeftPadding = 3;
+                pinRightPadding = 3;
+                printf("|%*s%d%*s|", pinLeftPadding, "", menu.dishes[i].PIN, pinRightPadding, "");
+                printf("");
+            }
+        }
+        
+    }
 }
 void printMenu()
 {
-    printf("\nWELCOME TO TEDDY RESTAURANT\n");
-    printf("%9c", '+');
-    for (int i = 0; i < 11; i++)
+    header();
+
+    int longestPriceDigits = 0;
+    int longestName = 0;
+    int longestUnit = 0;
+
+    for (int i = 0; i < menu.total; i++)
+    {
+        if (longestName < strlen(menu.dishes[i].name))
+        {
+            longestName = strlen(menu.dishes[i].name);
+        }
+        if (longestUnit < strlen(menu.dishes[i].Unit))
+        {
+            longestUnit = strlen(menu.dishes[i].Unit);
+        }
+        if (longestPriceDigits < countDigits(menu.dishes[i].Price))
+        {
+            longestPriceDigits = countDigits(menu.dishes[i].Price); // or I can use log10 + 1 to get the number of digits
+        }
+    }
+
+    int nameWidth = longestName;
+    int priceUnitWidth = longestPriceDigits + longestUnit;
+
+    // HEADER & TOP BORDER
+    int namePadding = nameWidth - strlen("Name");
+    if (namePadding < 0)
+        namePadding = -namePadding;
+    int nameLeftPadding = namePadding / 2;
+    int nameRightPadding = namePadding - nameLeftPadding;
+
+    int priceUnitPadding = priceUnitWidth - strlen("Price/Unit");
+    if (priceUnitPadding < 0)
+        priceUnitPadding = -priceUnitPadding;
+    int priceUnitLeftPadding = priceUnitPadding / 2;
+    int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
+
+    int pinPadding = 2;
+    int pinLeftPadding = pinPadding / 2;
+    int pinRightPadding = pinPadding - pinLeftPadding;
+
+    printf("+");
+    for (int i = 0; i < pinLeftPadding + 3 + pinRightPadding + 2; i++)
     {
         printf("-");
     }
     printf("+");
-    for (int i = 0; i < 22; i++)
+    for (int i = 0; i < nameLeftPadding + 4 + nameRightPadding + 2; i++)
     {
         printf("-");
     }
     printf("+");
-    for (int i = 0; i < 21; i++)
+    for (int i = 0; i < priceUnitLeftPadding + 10 + priceUnitRightPadding + 2; i++)
     {
         printf("-");
     }
     printf("+\n");
-    printf("        |    PIN    |        Dishes        |        Price        |\n");
-    printf("\t");
-    printf("|");
-    for (int i = 0; i < 11; i++)
-    {
-        printf("-");
-    }
-    printf("|");
-    for (int i = 0; i < 22; i++)
-    {
-        printf("-");
-    }
-    printf("|");
-    for (int i = 0; i < 21; i++)
-    {
-        printf("-");
-    }
-    printf("|\n");
-    display();
-    printf("%9c", '+');
-    for (int i = 0; i < 11; i++)
+
+    printf("| %*s%s%*s | %*s%s%*s | %*s%s%*s |\n",
+           pinLeftPadding, "", "PIN", pinRightPadding, "",
+           nameLeftPadding, "", "Name", nameRightPadding, "",
+           priceUnitLeftPadding, "", "Price/Unit", priceUnitRightPadding, "");
+
+    // MIDDLE BORDER
+    printf("+");
+    for (int i = 0; i < pinLeftPadding + 3 + pinRightPadding + 2; i++)
     {
         printf("-");
     }
     printf("+");
-    for (int i = 0; i < 22; i++)
+    for (int i = 0; i < nameLeftPadding + 4 + nameRightPadding + 2; i++)
     {
         printf("-");
     }
     printf("+");
-    for (int i = 0; i < 21; i++)
+    for (int i = 0; i < priceUnitLeftPadding + 10 + priceUnitRightPadding + 2; i++)
     {
         printf("-");
     }
     printf("+\n");
+    display(nameWidth, priceUnitWidth);
 }
 
 int orderDish(OrderItem *orderItem)
 {
     inputPositiveInt("Enter PIN of the dish you wanna order", &orderItem->dish.PIN);
+    fflush(stdin);
     while (true)
     {
         if (orderItem->dish.PIN == 0)
@@ -168,7 +222,7 @@ void makeOrder(Order *order)
 {
     int i = 0;
     int ContFlag = 0;
-    menu = readMenu("menu.txt");
+    readMenu("menu.txt");
     OrderItem OrderItem;
     order->total = 0;
     // yawm();
@@ -216,7 +270,7 @@ void orderAgain(Order *order)
 
     if (ynQuestion("Do you want to make another Order?"))
     {
-        Menu menu = readMenu("menu.txt");
+        readMenu("menu.txt");
         OrderItem orderitem;
         yawm();
         system("color 0F");

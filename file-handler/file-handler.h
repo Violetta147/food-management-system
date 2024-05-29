@@ -13,11 +13,11 @@
 #define BASE_DATA_PATH "./data/"
 #define INVOICES_PATH "invoices/"
 #define IS_TIME_TO_WRITE_BACK 1
-#define FORMATTED_READ_FIELDS "%5d\t%100[^\t]\t%10d\t%7d%11s\n"
+#define FORMATTED_READ_FIELDS "%5d\t%[^\t]\t%10d\t%7d\t%11s\n"
 
 // function prototypes
 void writeMenu(const char *fileName);
-Menu readMenu(const char *fileName);
+void readMenu(const char *fileName);
 void writeOrder(const char *filePath, Order *order, bool isAppend);
 void resetOrders(const char *filePath);
 int getListOrders(char listFiles[MAX][MAX], int *total);
@@ -80,7 +80,7 @@ void writeMenu(const char *fileName)
     fclose(menuP);
     return;
 }
-Menu readMenu(const char *fileName)
+void readMenu(const char *fileName)
 {
     char filePath[MAX_PATH_LENGTH];
     strcpy(filePath, BASE_DATA_PATH);
@@ -91,23 +91,40 @@ Menu readMenu(const char *fileName)
         printf("Unable to read file.");
         exit(-1);
     }
-    char hole[50];
-    fgets(hole, sizeof(hole), menuP);
+    char hole[256];
+    fscanf(menuP, "%[^\n]\n", hole);
     menu.total = 0;
-    while (true)
+    while(true)
     {
-        int result = fscanf(menuP, FORMATTED_READ_FIELDS,
-                            &menu.dishes[menu.total].PIN,
-                            menu.dishes[menu.total].name,
-                            &menu.dishes[menu.total].Price,
-                            &menu.dishes[menu.total].Status,
-                            menu.dishes[menu.total].Unit);
-        if (result != 5)
+        int check = fscanf(menuP, FORMATTED_READ_FIELDS,
+                           &menu.dishes[menu.total].PIN,
+                           menu.dishes[menu.total].name,
+                           &menu.dishes[menu.total].Price,
+                           &menu.dishes[menu.total].Status,
+                           menu.dishes[menu.total].Unit);
+        if (check != 5)
+        {
             break;
+        }
         ++menu.total;
     }
+    for(int i = 0; i < menu.total; i++)
+    {   
+        for(int j = strlen(menu.dishes[i].name) - 1; j >= 0; j--)
+        {
+          if(myIsAlpha(menu.dishes[i].name[j]) == false && myIsAlpha(menu.dishes[i].name[j]) == false)
+          {
+            continue;
+          }
+          else
+          {
+            menu.dishes[i].name[j+1] = '\0';
+            break; 
+          }
+          
+        }
+    }
     fclose(menuP);
-    return menu;
 }
 
 void writeOrder(const char *filePath, Order *order, bool isAppend)

@@ -203,3 +203,62 @@ for (int i = 0; i < menu.total; i++)
                 return 0;
             }
         }
+
+         for (int i = 0; i < menu.total; i++)
+    {
+        if (menu.dishes[i].Status == 1)
+        {
+            char hole[5];
+            sprintf(hole, "%d", menu.dishes[i].PIN);
+            int q = ((11 - strlen(hole)) / 2) + strlen(hole) + (strlen(hole) + 1) % 2;
+            printf("%9c%*d", '|', q, menu.dishes[i].PIN);
+            int F = ((11 - strlen(hole)) / 2);
+            for (; F > 0; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            q = ((24 - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name)) % 2;
+            printf("%*s", q, menu.dishes[i].name);
+            F = ((24 - strlen(menu.dishes[i].name)) / 2);
+            for (; F > 2; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            // print price and unit on the same line seperated by /
+            printf("%*d/%s|", 21 - strlen(menu.dishes[i].Unit) - 1, menu.dishes[i].Price, menu.dishes[i].Unit); //-1 because of / 
+            printf("\n");
+        }
+        else if (toupper(mode) == 'A')
+        {
+            if (menu.dishes[i].Status == 0)
+            {
+                printf("\033[0;31m"); // SET COLOR TO RED
+            }
+            char hole[5];
+            sprintf(hole, "%d", menu.dishes[i].PIN);
+            int q = ((11 - strlen(hole)) / 2) + strlen(hole) + (strlen(hole) + 1) % 2;
+            printf("%9c%*d", '|', q, menu.dishes[i].PIN);
+            int F = ((11 - strlen(hole)) / 2);
+            for (; F > 0; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            q = ((24 - strlen(menu.dishes[i].name)) / 2) + strlen(menu.dishes[i].name) + (strlen(menu.dishes[i].name)) % 2;
+            printf("%*s", q, menu.dishes[i].name);
+            F = ((24 - strlen(menu.dishes[i].name)) / 2);
+            for (; F > 2; F--)
+            {
+                printf(" ");
+            }
+            printf("|");
+            // print price and unit on the same line seperated by /
+            printf("%*d/%s|", 21 - strlen(menu.dishes[i].Unit) - 1, menu.dishes[i].Price, menu.dishes[i].Unit);
+            printf("\n");
+        }
+        // RESET COLOR TO NORMAL
+        printf("\033[0m");
+    }
+    return;
