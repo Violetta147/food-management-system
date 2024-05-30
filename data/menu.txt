@@ -1,4 +1,2 @@
-  PIN	Name                                     	Price    	Status   	Unit
-    1	banana                                   	20000    	1        	y
-    2	watermelon cocacola                      	20000    	1        	y
-    3	nguyen huu minh quan is nguyen ba vu chih	20000    	1        	y
+  PIN	Name             	Price	Status	Unit
+    2	nguyenhuuminhquan	33333	1    	y

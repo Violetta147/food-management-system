@@ -9,7 +9,7 @@
 
 void header();
 void printMenu();
-void display(int nameWidth, int priceUnitWidth);
+void display(int nameWidth, int longestPriceDigits, int longestUnit);
 int orderDish(OrderItem *orderItem);
 void makeOrder(Order *order);
 void orderAgain(Order *order);
@@ -72,171 +72,71 @@ void header()
     yawm();
     printf("\033[2J\033[1;1H");
 }
-void display(int nameWidth, int priceUnitWidth)
+void display(int nameWidth, int longestPriceDigits, int longestUnit)
 {
-
-    int pinPadding = 0;
-    int pinLeftPadding = 0;
-    int pinRightPadding = 0;
-    int longestPIN = countDigits(menu.dishes[0].PIN);
-
-    for (int i = 1; i < menu.total; i++)
-    {
-        if (longestPIN < countDigits(menu.dishes[i].PIN))
-        {
-            longestPIN = countDigits(menu.dishes[i].PIN);
-        }
-    }
-    for (int i = 0; i < menu.total; i++)
-    {
-        int currentPIN = countDigits(menu.dishes[i].PIN);
-        if (currentPIN <= longestPIN)
-        {
-            if (currentPIN == 1)
-            {
-                pinLeftPadding = 3;
-                pinRightPadding = 3;
-                printf("|%*s%d%*s|", pinLeftPadding, "", menu.dishes[i].PIN, pinRightPadding, "");
-                if (menu.total == 1)
-                {
-                    int nameRightPadding = nameWidth - 4;
-                    printf("%-*s%*s|", nameWidth, menu.dishes[i].name, nameRightPadding, "");
-                    printf("\n");
-                }
-                else
-                {
-                    int nameRightPadding = nameWidth - strlen(menu.dishes[i].name) + 2;
-                    printf("%-s%*s|", menu.dishes[i].name, nameRightPadding, "");
-                    int priceUnitCurrentWidth = strlen(menu.dishes[i].Unit) + countDigits(menu.dishes[i].Price) + 1;
-                    if (priceUnitCurrentWidth <= 10)
-                    {
-                        if (priceUnitCurrentWidth == 7)
-                        {
-                            int priceUnitPadding = priceUnitWidth - strlen("Price/Unit");
-                            if (priceUnitPadding < 0)
-                            {
-                                priceUnitPadding = -priceUnitPadding + 2;
-                            }
-                            else
-                            {
-                                priceUnitPadding += 2;
-                            }
-                            int priceUnitLeftPadding = priceUnitPadding / 2;
-                            int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
-                            printf(" %*s%d/%s%*s |", priceUnitLeftPadding, "", menu.dishes[i].Price, menu.dishes[i].Unit, priceUnitRightPadding, "");
-                        }
-                    }
-                    printf("\n");
-                }
-            }
-        }
-    }
 }
 void printMenu()
 {
     header();
 
-    int longestPriceDigits = 0;
-    int longestName = 0;
-    int longestUnit = 0;
+    int priceUnitWidth = 0;
+    int nameWidth = 0;
+    int pinWidth = 0;
 
-    for (int i = 0; i < menu.total; i++)
+    if(menu.total == 1)
     {
-        if (longestName < strlen(menu.dishes[i].name))
+        priceUnitWidth = countDigits(menu.dishes[0].Price) + strlen(menu.dishes[0].Unit) + 1;
+        nameWidth = strlen(menu.dishes[0].name);
+        pinWidth = countDigits(menu.dishes[0].PIN);
+
+        if(nameWidth < 4)
         {
-            longestName = strlen(menu.dishes[i].name);
+            nameWidth += 4-nameWidth;
         }
-        if (longestUnit < strlen(menu.dishes[i].Unit))
+        if(pinWidth < 3)
         {
-            longestUnit = strlen(menu.dishes[i].Unit);
+            pinWidth += 3-pinWidth;
         }
-        if (longestPriceDigits < countDigits(menu.dishes[i].Price))
+        if(priceUnitWidth < 10)
         {
-            longestPriceDigits = countDigits(menu.dishes[i].Price); // or I can use log10 + 1 to get the number of digits
+            priceUnitWidth += 10-priceUnitWidth;
+        }
+
+        
+
+        
+    }
+
+    int longestPriceDigits = countDigits(menu.dishes[0].Price);
+    int longestName = strlen(menu.dishes[0].name);
+    int longestUnit = strlen(menu.dishes[0].Unit);
+    int longestPIN = countDigits(menu.dishes[0].PIN);
+
+    for (int i = 1; i < menu.total; i++)
+    {
+        int tempPriceDigits = countDigits(menu.dishes[i].Price);
+        int tempName = strlen(menu.dishes[i].name);
+        int tempUnit = strlen(menu.dishes[i].Unit);
+        int tempPIN = countDigits(menu.dishes[i].PIN);
+
+        if (tempPIN > longestPIN)
+        {
+            longestPIN = tempPIN;
+        }
+        if (tempPriceDigits > longestPriceDigits) // floor (log10(x) + 1) for digits count
+        {
+            longestPriceDigits = tempPriceDigits;
+        }
+        if (tempName > longestName)
+        {
+            longestName = tempName;
+        }
+        if (tempUnit > longestUnit)
+        {
+            longestUnit = tempUnit;
         }
     }
-
-    int nameWidth = longestName;
-    int priceUnitWidth = longestPriceDigits + longestUnit;
-
-    // HEADER & TOP BORDER
-    int namePadding = nameWidth - strlen("Name");
-    if (namePadding < 0)
-        namePadding = -namePadding;
-    int nameLeftPadding = namePadding / 2;
-    int nameRightPadding = namePadding - nameLeftPadding;
-
-    int priceUnitPadding = priceUnitWidth - strlen("Price/Unit");
-    if (priceUnitPadding < 0)
-    {
-        priceUnitPadding = -priceUnitPadding;
-    }
-    int priceUnitLeftPadding = priceUnitPadding / 2;
-    int priceUnitRightPadding = priceUnitPadding - priceUnitLeftPadding;
-
-    int pinPadding = 2;
-    int pinLeftPadding = pinPadding / 2;
-    int pinRightPadding = pinPadding - pinLeftPadding;
-
-    printf("+");
-    for (int i = 0; i < pinLeftPadding + 3 + pinRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+");
-    for (int i = 0; i < nameLeftPadding + 4 + nameRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+");
-    for (int i = 0; i < priceUnitLeftPadding + 10 + priceUnitRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+\n");
-
-    printf("| %*s%s%*s | %*s%s%*s | %*s%s%*s |\n",
-           pinLeftPadding, "", "PIN", pinRightPadding, "",
-           nameLeftPadding, "", "Name", nameRightPadding, "",
-           priceUnitLeftPadding, "", "Price/Unit", priceUnitRightPadding, "");
-
-    // MIDDLE BORDER
-    printf("+");
-    for (int i = 0; i < pinLeftPadding + 3 + pinRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+");
-    for (int i = 0; i < nameLeftPadding + 4 + nameRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+");
-    for (int i = 0; i < priceUnitLeftPadding + 10 + priceUnitRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+\n");
-    display(nameWidth, priceUnitWidth);
-    // BOTTOM BORDER
-    printf("+");
-    for (int i = 0; i < pinLeftPadding + 3 + pinRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+");
-    for (int i = 0; i < nameLeftPadding + 4 + nameRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+");
-    for (int i = 0; i < priceUnitLeftPadding + 10 + priceUnitRightPadding + 2; i++)
-    {
-        printf("-");
-    }
-    printf("+\n");
 }
-
 int orderDish(OrderItem *orderItem)
 {
     inputPositiveInt("Enter PIN of the dish you wanna order", &orderItem->dish.PIN);
@@ -272,6 +172,12 @@ void makeOrder(Order *order)
     int i = 0;
     int ContFlag = 0;
     readMenu("menu.txt");
+    if (menu.total == 0)
+    {
+        printf("OUR RESTAURANT IS CURRENTLY CLOSED. PLEASE COMEBACK LATER\n");
+        yawm();
+        exit(0);
+    }
     OrderItem OrderItem;
     order->total = 0;
     // yawm();
@@ -373,6 +279,7 @@ void Customer()
         inputPositiveInt("Please choose 1 option", &choice);
         if (choice == 1)
         {
+
             makeOrder(&order);
             if (order.items[0].dish.PIN == 0)
             {

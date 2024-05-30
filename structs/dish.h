@@ -8,7 +8,7 @@ typedef struct Dish
     char name[100];
     int Price;
     int Status;
-    char Unit[10];
+    char Unit[100];
 } Dish;
 
 typedef struct Menu

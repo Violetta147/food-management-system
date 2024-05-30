@@ -118,7 +118,7 @@ void Ans()
         else if (i == 4 || myToUpper(action) == 'X')
         {
             {
-                printf("No change have been done.\n");
+                // printf("No change have been done.\n");
                 yawm();
                 exit(4);
             }
