@@ -11,9 +11,9 @@
 
 // function prototypes
 void printMenu();
-void display(int nameWidth, int longestPriceDigits, int longestUnit);
+void display();
 void Erase();
-void Delete(int arrayPIN[], int count);
+void Delete(int arrayPIN[]);
 void wandp();
 void resetMenu();
 
@@ -31,7 +31,6 @@ int ynQuestion(const char *question);
 // function to delete one dish in the menu at a time
 void Erase()
 {
-    int count = 1;
     int del[MAX];
     inputInt("Enter the PIN of the dish you want to delete", &del[0]);
     while (isRepeatPIN(menu, del[0]) == false || del[0] < 0)
@@ -61,7 +60,7 @@ void Erase()
     }
     else if (myToUpper(ans) == 'Y')
     {
-        Delete(del, count);
+        Delete(del);
         printf("\033[2J\033[1;1H");
         wandp();
     }
@@ -72,21 +71,25 @@ void Erase()
         exit(1);
     }
 }
-void Delete(int arrayPIN[], int count)
+void Delete(int arrayPIN[])
 {
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < menu.total; i++)
     {
-        for (int j = 0; j < menu.total; j++)
+        if (menu.dishes[i].PIN == arrayPIN[0])
         {
-            if (menu.dishes[j].PIN == arrayPIN[i])
+            writeDeletedDishLog(menu.dishes[i]);
+        }
+    }
+    for (int j = 0; j < menu.total; j++)
+    {
+        if (menu.dishes[j].PIN == arrayPIN[0])
+        {
+            for (int k = j; k < menu.total - 1; k++)
             {
-                for (int k = j; k < menu.total - 1; k++)
-                {
-                    menu.dishes[k] = menu.dishes[k + 1];
-                }
-                (menu.total)--;
-                break;
+                menu.dishes[k] = menu.dishes[k + 1];
             }
+            menu.total--;
+            break;
         }
     }
     return;
@@ -96,7 +99,7 @@ void wandp()
 {
     writeMenu("menu.txt");
     printf("Change applied.\n");
-    resetMenu();
+    // resetMenu();
     readMenu("menu.txt");
     printMenu();
     return;
@@ -110,7 +113,18 @@ void resetMenu()
         arrayPIN[i] = menu.dishes[i].PIN;
         count++;
     }
-    Delete(arrayPIN, count);
+    for (int i = 0; i < count; i++)
+    {
+        for (int j = i + 1; j < count; j++)
+        {
+            if (arrayPIN[i] > arrayPIN[j])
+            {
+                int temp = arrayPIN[i];
+                arrayPIN[i] = arrayPIN[j];
+                arrayPIN[j] = temp;
+            }
+        }
+    }
     return;
 }
 /*----------------------------------------------------------------------*/
@@ -130,10 +144,17 @@ void appendMenu()
     }
     /*----------------------------------------------------------*/
     inputInt("Enter new dish's PIN", &Temp.PIN);
-    while (isRepeatPIN(menu, Temp.PIN) == true || Temp.PIN < 0)
+    while (isRepeatPIN(menu, Temp.PIN) == true || Temp.PIN < 0 || countDigits(Temp.PIN) > 5)
     {
-        printf("The PIN you entered already existed before. Please choose another PIN!\n");
-        inputInt("Enter new dish's PIN", &Temp.PIN);
+        if (countDigits(Temp.PIN) > 5)
+        {
+            printf("PIN max length is 5 digits!");
+        }
+        else
+        {
+            printf("The PIN you entered already existed before. Please choose another PIN!\n");
+            inputInt("Enter new dish's PIN", &Temp.PIN);
+        }
     }
     /*----------------------------------------------------------*/
     inputPositiveInt("Enter new dish's price", &Temp.Price);
@@ -151,7 +172,7 @@ void appendMenu()
         for (int i = 0; i < strlen(Temp.Unit); i++)
         {
             if (myIsAlpha(Temp.Unit[i]) == false)
-            {   
+            {
                 printf("Unit should not include special characters or number\n");
                 input("Enter dish's new Unit", Temp.Unit);
             }
@@ -277,6 +298,11 @@ void Customize(int PIN)
             printf("Please enter non negative integer!\n");
             inputInt("Enter dish's new PIN", &Temp.PIN);
         }
+        else if(countDigits(Temp.PIN) > 5)
+        {
+            printf("PIN max length is 5 digits");
+            inputInt("Enter dish's new PIN", &Temp.PIN);
+        }
         else
         {
             // SUCCESS VALIDATING PIN
@@ -375,7 +401,7 @@ bool input(const char *question, char str[])
     fgets(str, MAX_STRING_LENGTH, stdin);
     str[strlen(str) - 1] = '\0';
     fflush(stdin);
-    if(strlen(str) > 0)
+    if (strlen(str) > 0)
     {
         return true;
     }

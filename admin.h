@@ -145,7 +145,7 @@ void calculate_popularity_revenue(int *revenue)
         }
         if (dateToInt(date1) >= dateToInt(date2))
         {
-            printf("Ngay dau phai nho hon ngay sau.\n");
+            printf("Date1 has to be before Date2\n");
             flagTime = 1;
         }
     } while (flagTime == 1);
@@ -197,6 +197,8 @@ void calculate_popularity_revenue(int *revenue)
             totalOrders += orderCount;
         }
     }
+    //asign 0 to each order's field or ith dishes that exceed total because they don't have data
+
     Popularity pop[MAX];
     for (int i = 0; i < MAX; i++)
     {
@@ -205,24 +207,45 @@ void calculate_popularity_revenue(int *revenue)
         pop[i].Dish.Price = 0;
         pop[i].Dish.name[0] = '\0';
     }
-    readMenu("menu.txt");
-    for (int i = 0; i < menu.total; i++)
+    Dish deletedDishes[MAX];
+    int deletedDishesCount = 0;
+    for (int i = 0; i < MAX; i++)
     {
-        for (int j = 0; j < totalOrders; j++)
-        {
-            if (strcmp(TempOrder[j].status, ORDER_PAID) != 0)
-                continue;
-            for (int k = 0; k < TempOrder[j].total; k++)
-            {
-                if (TempOrder[j].items[k].dish.PIN == menu.dishes[i].PIN)
-                {
-                    pop[i].Dish = menu.dishes[i];
-                    pop[i].count += TempOrder[j].items[k].quantity;
-                    pop[i].Dish.Price = menu.dishes[i].Price;
-                }
-            }
-        }
+        deletedDishes[i].PIN = 0;
+        deletedDishes[i].Price = 0;
+        deletedDishes[i].name[0] = '\0';
     }
+    readDeletedDishLog(deletedDishes, &deletedDishesCount);
+    printf("%d\n", deletedDishesCount);
+    for(int i = 0; i < deletedDishesCount; i++)
+    {
+        printf("%s\n", deletedDishes[i].name);
+    }
+    readMenu("menu.txt");
+    int i;
+    for(i = 0; i < menu.total; i++)
+    {
+        pop[i].Dish.PIN = menu.dishes[i].PIN;
+    }
+    for(int j = i; j < deletedDishesCount; j++)
+    {
+        if(pop[j].Dish.PIN == deletedDishes[j].PIN) 
+            continue;
+        else  
+        {   
+            if(deletedDishes[j].PIN == 0)
+            {
+                break;
+            }
+            pop[j].Dish.PIN = deletedDishes[j].PIN;
+        }   
+    }
+    
+    for(int k = 0; k < MAX; k++)
+    {
+        printf("%s\n", pop[k].Dish.name);
+    }
+    
     // generate tests to test if the popularity is correct
 
     // sort the popularity

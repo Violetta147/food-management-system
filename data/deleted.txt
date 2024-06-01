@@ -1,0 +1,2 @@
+1,trinh minh dat,20000,1,kg
+4,milk,20000,1,ml

@@ -404,3 +404,47 @@ int countOrders(const char *fileName)
     fclose(orderP);
     return orderCount;
 }
+
+//function to write log of data of deleted dishes as csv file into file-handler deleted by Delete function in admin mode
+void writeDeletedDishLog(Dish dish)
+{
+    char filePath[MAX_PATH_LENGTH];
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, "deleted.txt");
+    FILE *logP = fopen(filePath, "a");
+    if (logP == NULL)
+    {
+        printf("Unable to open file.");
+        exit(-1);
+    }
+    fprintf(logP, "%d,%s,%d,%d,%s\n", dish.PIN, dish.name, dish.Price, dish.Status, dish.Unit);
+    fclose(logP);
+}
+void readDeletedDishLog(Dish deletedDishes[MAX], int *total)
+{
+    char filePath[MAX_PATH_LENGTH];
+    strcpy(filePath, BASE_DATA_PATH);
+    strcat(filePath, "deleted.txt");
+    FILE *logP = fopen(filePath, "r");
+    if (logP == NULL)
+    {
+        printf("Unable to open file.");
+        exit(-1);
+    }
+    *total = 0;
+    while (true)
+    {
+        int check = fscanf(logP, "%d,%[^,],%d,%d,%s\n",
+                           &deletedDishes[*total].PIN,
+                           deletedDishes[*total].name,
+                           &deletedDishes[*total].Price,
+                           &deletedDishes[*total].Status,
+                           deletedDishes[*total].Unit);
+        if (check != 5)
+        {
+            break;
+        }
+        ++*total;
+    }
+    fclose(logP);
+}
