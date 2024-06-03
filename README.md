@@ -45,7 +45,7 @@ flowchart TD
     ModeCheck -- No --> CustomerCheck{"toupper(mode) == 'C'"}
     CustomerCheck -- Yes --> WorkingDay["Enter working day"]
     WorkingDay --> DayStatus{"Is the day over?"}
-    DayStatus -- Yes --> NoAccess["Cannot access for orders"] --> Start
+    DayStatus -- Yes --> NoAccess["Cannot access for ordering"] --> Start
     DayStatus -- No --> CustomerMode{{"Customer Mode"}}
     
     CustomerMode --> CustomerOption{"Choose option"}
