@@ -17,39 +17,55 @@ header should include `#pragma once`
 
 ```mermaid
 flowchart TD
-    Start([Bắt đầu]) --> InputX["Nhập X để thoát chương trình"]
-    InputX --> Enter["enter()"]
-    Enter --> ModeCheck{"toupper(mode) == 'A'"}
+    BatDau([Bắt đầu]) --> NhapX["Nhập X để thoát chương trình"]
+    NhapX --> XacNhan["enter()"]
+    XacNhan --> KiemTraCheDo{"toupper(mode) == 'A'"}
     
-    ModeCheck -- Có --> AdminPassword["Nhập mật khẩu Quản trị viên"]
-    AdminPassword --> PassCheck{"Mật khẩu đúng không?"}
-    PassCheck -- Có --> AccessGranted["TRUY CẬP THÀNH CÔNG"]
-    AccessGranted --> ReadMenu["readMenu('Food.txt')"]
-    ReadMenu --> AdminModeLoop{{"Chế độ Quản trị"}}
+    KiemTraCheDo -- Có --> NhapMatKhauAdmin["Nhập mật khẩu Quản trị viên"]
+    NhapMatKhauAdmin --> KiemTraMatKhau{"Mật khẩu đúng không?"}
+    KiemTraMatKhau -- Có --> TruyCapThanhCong["TRUY CẬP THÀNH CÔNG"]
+    TruyCapThanhCong --> DocThucDon["readMenu('Food.txt')"]
+    DocThucDon --> VongLapCheDoAdmin{{"Chế độ Quản trị"}}
     
-    PassCheck -- Không --> RetryCounter["Số lần thử < 4"]
-    RetryCounter -- Có --> AdminPassword
-    RetryCounter -- Không --> ExitProgram["Thoát chương trình"]
+    KiemTraMatKhau -- Không --> DemSoLanThu["Số lần thử < 4"]
+    DemSoLanThu -- Có --> NhapMatKhauAdmin
+    DemSoLanThu -- Không --> ThoatChuongTrinh["Thoát chương trình"]
     
-    AdminModeLoop --> PrintAdminMenu["printMenuAdmin()"]
-    PrintAdminMenu --> AdminAns["Ans()"]
-    AdminAns --> MoveCheck{"toupper(move)"}
+    VongLapCheDoAdmin --> InMenuAdmin["printMenuAdmin()"]
+    InMenuAdmin --> TraLoiAdmin["Ans()"]
+    TraLoiAdmin --> KiemTraDiChuyen{"toupper(move)"}
     
-    MoveCheck -- "D" --> Erase["erase()"] --> AdminModeLoop
-    MoveCheck -- "A" --> Extend["extend()"] --> AdminModeLoop
-    MoveCheck -- "C" --> Custom["custom()"] --> AdminModeLoop
-    MoveCheck -- "S" --> Statistics["Statistics()"] --> AdminModeLoop
+    KiemTraDiChuyen -- "D" --> XoaMon["erase()"] --> VongLapCheDoAdmin
+    KiemTraDiChuyen -- "A" --> ThemMon["extend()"] --> VongLapCheDoAdmin
+    KiemTraDiChuyen -- "C" --> DoiThongTin["custom()"] --> VongLapCheDoAdmin
+    KiemTraDiChuyen -- "S" --> ThongKe["Statistics()"] --> VongLapCheDoAdmin
     
-    AdminModeLoop --> ExitAdminMode["Thoát Chế độ Quản trị"] --> Start
+    VongLapCheDoAdmin --> ThoatCheDoAdmin["Thoát Chế độ Quản trị"] --> BatDau
     
-    ModeCheck -- Không --> CustomerCheck{"toupper(mode) == 'C'"}
-    CustomerCheck -- Có --> WorkingDay["Nhập ngày làm việc"]
-    WorkingDay --> DayStatus{"Ngày đã kết thúc?"}
-    DayStatus -- Có --> NoAccess["Không thể truy cập để đặt món"] --> Start
-    DayStatus -- Không --> CustomerMode{{"Chế độ Khách hàng"}}
+    KiemTraCheDo -- Không --> KiemTraKhachHang{"toupper(mode) == 'C'"}
+    KiemTraKhachHang -- Có --> NhapNgayLamViec["Nhập ngày làm việc"]
+    NhapNgayLamViec --> TinhTrangNgay{"Ngày đã kết thúc?"}
+    TinhTrangNgay -- Có --> KhongTruyCap["Không thể truy cập để đặt món"] --> BatDau
+    TinhTrangNgay -- Không --> CheDoKhachHang{{"Chế độ Khách hàng"}}
     
-    CustomerMode --> CustomerOption{"Chọn tùy chọn"}
-    CustomerOption -- "Đặt hàng và Thanh toán" --> OrderPay["Đặt hàng và Thanh toán"]
-    CustomerOption -- "Hóa
+    CheDoKhachHang --> LuaChonKhachHang{"Chọn tùy chọn"}
+    LuaChonKhachHang -- "Đặt hàng và Thanh toán" --> DatHangVaThanhToan["Đặt hàng và Thanh toán"]
+    LuaChonKhachHang -- "Hóa đơn chưa thanh toán" --> HoaDonChuaThanhToan["Hóa đơn chưa thanh toán"]
+    LuaChonKhachHang -- "Thoát về Bảng điều khiển chính" --> ThoatVeBangDieuKhien["Thoát về Bảng điều khiển chính"] --> BatDau
+    LuaChonKhachHang -- "Kết thúc ngày" --> KetThucNgay["Kết thúc ngày"]
+    
+    HoaDonChuaThanhToan --> ThemDonHang["Thêm đơn vào hóa đơn chưa thanh toán"]
+    HoaDonChuaThanhToan --> ThanhToanHoaDon["Thanh toán hóa đơn"]
+    ThemDonHang --> CheDoKhachHang
+    ThanhToanHoaDon --> CheDoKhachHang
+    
+    KetThucNgay --> InThongKeNgay["In thống kê trong ngày"]
+    InThongKeNgay --> BatDau
+
+    CheDoKhachHang --> LuaChonKhachHang
+    KiemTraKhachHang -- Không --> BatDau
+    
+    BatDau --> KetThuc([Kết thúc])
+
 
 ```
