@@ -17,55 +17,55 @@ header should include `#pragma once`
 
 ```mermaid
 flowchart TD
-    BatDau([Bắt đầu]) --> NhapX["Nhập X để thoát chương trình"]
-    NhapX --> XacNhan["enter()"]
-    XacNhan --> KiemTraCheDo{"toupper(mode) == 'A'"}
+    Start([Start]) --> InputX["Input X to exit the program"]
+    InputX --> Enter["enter()"]
+    Enter --> ModeCheck{"toupper(mode) == 'A'"}
     
-    KiemTraCheDo -- Có --> NhapMatKhauAdmin["Nhập mật khẩu Quản trị viên"]
-    NhapMatKhauAdmin --> KiemTraMatKhau{"Mật khẩu đúng không?"}
-    KiemTraMatKhau -- Có --> TruyCapThanhCong["TRUY CẬP THÀNH CÔNG"]
-    TruyCapThanhCong --> DocThucDon["readMenu('Food.txt')"]
-    DocThucDon --> VongLapCheDoAdmin{{"Chế độ Quản trị"}}
+    ModeCheck -- Yes --> AdminPassword["Enter Administrator password"]
+    AdminPassword --> PassCheck{"Correct password?"}
+    PassCheck -- Yes --> AccessGranted["ACCESS GRANTED"]
+    AccessGranted --> ReadMenu["readMenu('Food.txt')"]
+    ReadMenu --> AdminModeLoop{{"Admin Mode"}}
     
-    KiemTraMatKhau -- Không --> DemSoLanThu["Số lần thử < 4"]
-    DemSoLanThu -- Có --> NhapMatKhauAdmin
-    DemSoLanThu -- Không --> ThoatChuongTrinh["Thoát chương trình"]
+    PassCheck -- No --> RetryCounter["Retry Counter < 4"]
+    RetryCounter -- Yes --> AdminPassword
+    RetryCounter -- No --> ExitProgram["Exit Program"]
     
-    VongLapCheDoAdmin --> InMenuAdmin["printMenuAdmin()"]
-    InMenuAdmin --> TraLoiAdmin["Ans()"]
-    TraLoiAdmin --> KiemTraDiChuyen{"toupper(move)"}
+    AdminModeLoop --> PrintAdminMenu["printMenuAdmin()"]
+    PrintAdminMenu --> AdminAns["Ans()"]
+    AdminAns --> MoveCheck{"toupper(move)"}
     
-    KiemTraDiChuyen -- "D" --> XoaMon["erase()"] --> VongLapCheDoAdmin
-    KiemTraDiChuyen -- "A" --> ThemMon["extend()"] --> VongLapCheDoAdmin
-    KiemTraDiChuyen -- "C" --> DoiThongTin["custom()"] --> VongLapCheDoAdmin
-    KiemTraDiChuyen -- "S" --> ThongKe["Statistics()"] --> VongLapCheDoAdmin
+    MoveCheck -- "D" --> Erase["erase()"] --> AdminModeLoop
+    MoveCheck -- "A" --> Extend["extend()"] --> AdminModeLoop
+    MoveCheck -- "C" --> Custom["custom()"] --> AdminModeLoop
+    MoveCheck -- "S" --> Statistics["Statistics()"] --> AdminModeLoop
     
-    VongLapCheDoAdmin --> ThoatCheDoAdmin["Thoát Chế độ Quản trị"] --> BatDau
+    AdminModeLoop --> ExitAdminMode["Exit Admin Mode"] --> Start
     
-    KiemTraCheDo -- Không --> KiemTraKhachHang{"toupper(mode) == 'C'"}
-    KiemTraKhachHang -- Có --> NhapNgayLamViec["Nhập ngày làm việc"]
-    NhapNgayLamViec --> TinhTrangNgay{"Ngày đã kết thúc?"}
-    TinhTrangNgay -- Có --> KhongTruyCap["Không thể truy cập để đặt món"] --> BatDau
-    TinhTrangNgay -- Không --> CheDoKhachHang{{"Chế độ Khách hàng"}}
+    ModeCheck -- No --> CustomerCheck{"toupper(mode) == 'C'"}
+    CustomerCheck -- Yes --> WorkingDay["Enter working day"]
+    WorkingDay --> DayStatus{"Is the day over?"}
+    DayStatus -- Yes --> NoAccess["Cannot access for orders"] --> Start
+    DayStatus -- No --> CustomerMode{{"Customer Mode"}}
     
-    CheDoKhachHang --> LuaChonKhachHang{"Chọn tùy chọn"}
-    LuaChonKhachHang -- "Đặt hàng và Thanh toán" --> DatHangVaThanhToan["Đặt hàng và Thanh toán"]
-    LuaChonKhachHang -- "Hóa đơn chưa thanh toán" --> HoaDonChuaThanhToan["Hóa đơn chưa thanh toán"]
-    LuaChonKhachHang -- "Thoát về Bảng điều khiển chính" --> ThoatVeBangDieuKhien["Thoát về Bảng điều khiển chính"] --> BatDau
-    LuaChonKhachHang -- "Kết thúc ngày" --> KetThucNgay["Kết thúc ngày"]
+    CustomerMode --> CustomerOption{"Choose option"}
+    CustomerOption -- "Order and Pay" --> OrderPay["Order and Pay"]
+    CustomerOption -- "Unpaid Bill" --> UnpaidBill["Unpaid Bill"]
+    CustomerOption -- "Exit to Main Panel" --> ExitMain["Exit to Main Panel"] --> Start
+    CustomerOption -- "End Day" --> EndDay["End Day"]
     
-    HoaDonChuaThanhToan --> ThemDonHang["Thêm đơn vào hóa đơn chưa thanh toán"]
-    HoaDonChuaThanhToan --> ThanhToanHoaDon["Thanh toán hóa đơn"]
-    ThemDonHang --> CheDoKhachHang
-    ThanhToanHoaDon --> CheDoKhachHang
+    UnpaidBill --> AddOrder["Add Order to Unpaid Bill"]
+    UnpaidBill --> PayBill["Pay Bill"]
+    AddOrder --> CustomerMode
+    PayBill --> CustomerMode
     
-    KetThucNgay --> InThongKeNgay["In thống kê trong ngày"]
-    InThongKeNgay --> BatDau
+    EndDay --> DayStatistics["Print daily statistics"]
+    DayStatistics --> Start
 
-    CheDoKhachHang --> LuaChonKhachHang
-    KiemTraKhachHang -- Không --> BatDau
+    CustomerMode --> CustomerOption
+    CustomerCheck -- No --> Start
     
-    BatDau --> KetThuc([Kết thúc])
+    Start --> End([End])
 
 
 ```
